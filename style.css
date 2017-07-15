@@ -1,0 +1,40 @@
+body { margin: 0; overflow: hidden;}
+			canvas { width: 500px; height: 500px; z-index: -1;}
+			a{
+				color: white;
+			}
+			a:hover{
+				color: #f8f8f8;
+			}
+			#info, #plus{
+				position: absolute;	
+				top: 5px;
+				left: 5px;
+				font-family: monospace;
+				color: white;
+				font-size: 13px;
+				text-shadow:2px 2px 1px #000;
+				text-decoration: none;	
+				z-index: 1;	
+				background-color: #f88;
+				opacity: .7;
+				padding: 7px;
+				border-radius: 10px;
+			}
+			input{
+				width: 100px;
+				height:25px;
+				background-color: #f33;
+				border: none;
+				border-radius: 5px;
+				color: white;
+				font-size: 13px;
+				text-shadow:2px 2px 1px #000;
+				padding-bottom: 1px;
+			}
+			input:hover{
+				background-color: #f11;
+			}
+			input:active{
+				background-color: #e00;
+			}

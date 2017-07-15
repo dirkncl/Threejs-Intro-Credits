@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<meta property="og:title"
+content="▲ FITC Toronto Intro 2017 ▲" />
+		<meta property="og:site_name" content="???.net"/>
+		<meta property="og:description" content="intro credits for FITC Toronto 2017" />
+		<meta property="og:image" content=""/>
+		<title>▲ FITC Intro ▲</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<script src="js/three.min.js"></script>		
+		<script src="js/jquery-2.2.0.min.js"></script>		
+		<script src="js/libs/stats.min.js"></script>
+		
+		<script src = "camp/ccBase.js"></script>	
+		<script src = "camp/ccThreeBase.js"></script>	
+		<script src = "camp/ccDebuger.js"></script>	
+		<script src = "camp/ccGifSaver.js"></script>	
+		<script src = "camp/ccRenderShader.js"></script>
+		<script src = "camp/ccAudio.js"></script>	
+		<script src = "camp/ccMesh.js"></script>
+		<script src = "camp/fx/ccMotionBlur.js"></script>	
+		
+		<script src="js/postprocessing/EffectComposer.js"></script>
+		<script src="js/shaders/CopyShader.js"></script>
+		<script src="js/postprocessing/ShaderPass.js"></script>
+		<script src="js/postprocessing/RenderPass.js"></script>
+		<script src="js/postprocessing/MaskPass.js"></script>
+		<script src="js/postprocessing/SavePass.js"></script>
+		<script src="js/postprocessing/TexturePass.js"></script>
+			
+
+		<script>
+			var base = new ccBase();
+			new ccThreeBase(base);
+			base.init();
+			var audio = new ccAudio(base);
+			new ccDebuger(base);
+			new ccMotionBlur(base,.666);			
+								
+		</script>			
+	</body>
+</html>
