@@ -16,12 +16,12 @@ tunnelController.prototype.init = function(){
         side:THREE.DoubleSide
 	} );
     
-	var mesh = new THREE.Mesh(geometry, material);
-	base.scene.add(mesh);
-	mesh.position.z = -20;
+	this.mesh = new THREE.Mesh(geometry, material);
+	base.scene.add(this.mesh);
+	this.mesh.position.z = -20;
 
 	base.addUpdateCallback(()=>{
-		mesh.rotation.x += .01;
-		mesh.rotation.y += .02;
+		this.mesh.rotation.x = base.time.time;
+		this.mesh.rotation.y = base.time.time*.333;
 	});
 }
