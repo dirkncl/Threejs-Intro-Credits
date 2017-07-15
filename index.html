@@ -31,6 +31,8 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src="js/postprocessing/MaskPass.js"></script>
 		<script src="js/postprocessing/SavePass.js"></script>
 		<script src="js/postprocessing/TexturePass.js"></script>
+		
+		<script src = "fitc/tunnelController.js"></script>
 			
 
 		<script>
@@ -40,7 +42,10 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			var audio = new ccAudio(base);
 			new ccDebuger(base);
 			new ccMotionBlur(base,.666);			
-								
+						
+			var tunnels = new tunnelController(base);
+			tunnels.init();
+			
 		</script>			
 	</body>
 </html>
