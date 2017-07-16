@@ -37,7 +37,6 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src = "fitc/tunnelController.js"></script>
         <script id="fragmentShader" type="x-shader/x-fragment">
 
-			uniform float time;
 			uniform vec2 resolution;
 
 			varying vec2 vUv;
@@ -46,7 +45,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 
 				vec2 position = -1.0 + 2.0 * vUv;
 
-				gl_FragColor = vec4( vUv.y, 0., 0.5, 1.0);
+				gl_FragColor = vec4( vUv.y, vUv.x,0.0, 1.0);
 
 			}
 
@@ -56,14 +55,16 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 
 			uniform vec2 uvScale;
 			varying vec2 vUv;
+			uniform float time;
 
 			void main()
 			{
-
 				vUv = uv;
-				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-				gl_Position = projectionMatrix * mvPosition;
+                vec3 pos = position;
+                pos.xy += vec2(cos(pos.z*0.2 - time), sin(pos.z*0.2 - time));
+                vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
 
+                gl_Position = projectionMatrix * mvPosition;
 			}
 
 		</script>
