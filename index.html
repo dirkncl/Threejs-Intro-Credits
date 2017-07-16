@@ -17,6 +17,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		
 		<script src = "camp/ccBase.js"></script>	
 		<script src = "camp/ccThreeBase.js"></script>	
+		<script src = "camp/ccScheduler.js"></script>	
 		<script src = "camp/ccDebuger.js"></script>	
 		<script src = "camp/ccGifSaver.js"></script>	
 		<script src = "camp/ccRenderShader.js"></script>
@@ -80,6 +81,29 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 						
 			var tunnels = new tunnelController(base);
 			tunnels.init();
+			
+			var scheduler = new ccScheduler(base);
+			scheduler.init();
+			
+			function foo(){
+				base.camera.position.z +=2;
+				console.log("foo");
+				scheduler.callNextBeat(foo);
+			}
+			
+			function reset(){
+				base.camera.position.z = 0;
+				console.log("bar");
+				scheduler.callNextBar(reset);
+			}
+			function color(){
+				console.log("phrase");
+				scheduler.callNextPhrase(color);
+			}
+			
+			scheduler.callNextBeat(foo);
+			scheduler.callNextBar(reset);
+			scheduler.callNextPhrase(color);
 			
 		</script>			
 	</body>
