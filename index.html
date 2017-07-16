@@ -38,34 +38,43 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src = "fitc/tunnelController.js"></script>
         <script id="fragmentShader" type="x-shader/x-fragment">
 
-			uniform vec2 resolution;
+
+			uniform float seed;
+			uniform float time;
 
 			varying vec2 vUv;
 
 			void main( void ) {
-
-				vec2 position = -1.0 + 2.0 * vUv;
-
-				gl_FragColor = vec4( vUv.y, vUv.x,0.0, 1.0);
+				vec2 p = vUv.yx;
+				float v = smoothstep(6., 3., p.y);
+				p.y-=sin(time)*.8-time;
+				vec3 f = sin(vec3(seed*.1+p.x, p.y, seed+p.y*2.) +p.x*6.+p.y*sin(p.y*10.+seed*4.)+(p.y*sin(seed*.5)*10.)+(p.y+sin(time*.4)*10.))*.5+.5;
+				
+				float a = sin(time +p.x*6.+p.y*sin(p.y*10.+seed*5.)+(p.y*sin(seed*.5)*10.)+(p.y+sin(time*.4)*10.));
+				a*=2.;
+				a-=1.;
+				//a = min(f.r, min(f.g, f.b));
+				a*= v;
+				gl_FragColor = vec4( f, a*.5);
 
 			}
 
 		</script>
 
 		<script id="vertexShader" type="x-shader/x-vertex">
-
-			uniform vec2 uvScale;
 			varying vec2 vUv;
 			uniform float time;
+			uniform float amp;
+			uniform float seed;
 
 			void main()
 			{
 				vUv = uv;
-                vec3 pos = position;
-                pos.xy += vec2(cos(pos.z*0.2 - time), sin(pos.z*0.2 - time));
-                vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
+				vec3 pos = position;
+				pos.xy += vec2(cos(pos.z*0.2 - time+seed), sin(pos.z*0.2 - time+seed))*amp;
+				vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
 
-                gl_Position = projectionMatrix * mvPosition;
+				gl_Position = projectionMatrix * mvPosition;
 			}
 
 		</script>
@@ -73,8 +82,9 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script>
 			var base = new ccBase();
 			new ccThreeBase(base);
-            new ccMath();
-            base.init();
+			var scheduler = new ccScheduler(base);
+			scheduler.init();
+			new ccMath();
 			var audio = new ccAudio(base);
 			new ccDebuger(base);
 			new ccMotionBlur(base,.666);			
@@ -82,29 +92,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			var tunnels = new tunnelController(base);
 			tunnels.init();
 			
-			var scheduler = new ccScheduler(base);
-			scheduler.init();
-			
-			function foo(){
-				base.camera.position.z +=2;
-				console.log("foo");
-				scheduler.callNextBeat(foo);
-			}
-			
-			function reset(){
-				base.camera.position.z = 0;
-				console.log("bar");
-				scheduler.callNextBar(reset);
-			}
-			function color(){
-				console.log("phrase");
-				scheduler.callNextPhrase(color);
-			}
-			
-			scheduler.callNextBeat(foo);
-			scheduler.callNextBar(reset);
-			scheduler.callNextPhrase(color);
-			
+						
 		</script>			
 	</body>
 </html>

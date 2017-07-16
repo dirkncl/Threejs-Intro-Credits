@@ -80,3 +80,16 @@ ccMesh.cone = function(radialSegments, depthSegments, startRadius, endRadius, de
 	geometry.center();
 	return geometry;
 }
+
+ccMesh.scaleUV = function(geom, scale, uvIndex=0){
+	for(var i = 0; i<geom.faceVertexUvs[uvIndex].length; i++){
+		for(var j = 0; j<geom.faceVertexUvs[uvIndex][i].length; j++){
+			if(i==j && j==0){
+				console.log(geom.faceVertexUvs[uvIndex][i][j]);
+			}
+			geom.faceVertexUvs[uvIndex][i][j].multiplyScalar(scale);
+		}
+	}
+	geom.uvsNeedUpdate = true;
+	return geom;
+}

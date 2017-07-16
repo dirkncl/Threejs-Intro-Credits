@@ -1,10 +1,12 @@
 function ccScheduler(base){
 	this.base = base;
+	base.scheduler = this;
+	console.log(base.scheduler);
 	this.frameCallbacks = [];
 	this.timeCallbacks = [];
 	this.sequenceCallbacks = [];
 	
-	this.bpm = 200;
+	this.bpm = 120;
 	this.remainingTimeInBeat = 0;
 	this.remainingBeatsInBar = 5;
 	this.remainingBeatsInPhrase = 17;
