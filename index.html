@@ -49,13 +49,9 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 				float v = smoothstep(6., 3., p.y);
 				p.y-=sin(time)*.8-time;
 				vec3 f = sin(vec3(seed*.1+p.x, p.y, seed+p.y*2.) +p.x*6.+p.y*sin(p.y*10.+seed*4.)+(p.y*sin(seed*.5)*10.)+(p.y+sin(time*.4)*10.))*.5+.5;
-				
-				float a = sin(time +p.x*6.+p.y*sin(p.y*10.+seed*5.)+(p.y*sin(seed*.5)*10.)+(p.y+sin(time*.4)*10.));
-				a*=2.;
-				a-=1.;
-				//a = min(f.r, min(f.g, f.b));
+				float a = length(f*.5)-.5;
 				a*= v;
-				gl_FragColor = vec4( f, a*.5);
+				gl_FragColor = vec4( f, a);
 
 			}
 
