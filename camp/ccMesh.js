@@ -43,7 +43,6 @@ ccMesh.cone = function(radialSegments, depthSegments, startRadius, endRadius, de
     {
         var depthProgress = (i / depthSegments) * depth
         var currentRadius = Math.lerp(startRadius, endRadius, 1.0 - i / depthSegments)
-        console.log(currentRadius)
 		for(var segment = 0.0; segment <= radialSegments; segment++)
         {
             var angle = (segment / radialSegments) * Math.PI * 2.0
