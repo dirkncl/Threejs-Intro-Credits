@@ -47,9 +47,11 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			void main( void ) {
 				vec2 p = vUv.yx;
 				float v = smoothstep(6., 3., p.y);
-				p.y-=sin(time)*.8-time;
-				vec3 f = sin(vec3(seed*.1+p.x, p.y, seed+p.y*2.) +p.x*6.+p.y*sin(p.y*10.+seed*4.)+(p.y*sin(seed*.5)*10.)+(p.y+sin(time*.4)*10.))*.5+.5;
-				float a = length(f*.5)-.5;
+				p.y-=sin(time+seed)*.8-time;
+				vec3 f = sin(vec3(seed*.1+p.x, sin(v*10.), seed+v*2.5) +p.x*6.+v*sin(p.y*10.+seed*4.)+(v*sin(seed*.5)*10.)+(v+sin(time*.4)*10.))*.5+.5;
+				//f.r = sin(length(p.y*20.));
+				//f.gb = f.rr;
+				float a = length(f*.4)-.5;
 				a*= v;
 				gl_FragColor = vec4( f, a);
 
@@ -67,7 +69,10 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			{
 				vUv = uv;
 				vec3 pos = position;
-				pos.xy += vec2(cos(pos.z*0.2 - time+seed), sin(pos.z*0.2 - time+seed))*amp;
+				pos.xy *=1.-pow(uv.x/6.3, .1);
+				
+				
+				pos.xy += vec2(cos(pos.z*10. - time*(mod(seed, 1.)-.5)*2.+seed), sin(pos.z*200.0 - time*(mod(seed, 1.)-.5)*3.))*amp*uv.x;
 				vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
 
 				gl_Position = projectionMatrix * mvPosition;

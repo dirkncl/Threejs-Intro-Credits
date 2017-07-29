@@ -15,18 +15,19 @@ tunnelController.prototype.init = function(){
     	},
 			vertexShader: document.getElementById( 'vertexShader' ).textContent,
 			fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
-			side:THREE.DoubleSide,
+			side:THREE.BackSide,
 			transparent:true,
-			blending: THREE.AdditiveBlending,
-			depthTest: false
+			blending: THREE.NormalBlending,
+			depthTest: false,
+			wireframe: true
 	} );
 	
 	this.meshes = [];
 	
-	for(var i = 0; i< 5; i++){
+	for(var i = 0; i< 15; i++){
 		var mesh = new THREE.Mesh(geometry, this.material.clone());
 		base.scene.add(mesh);
-		mesh.position.z = -80;
+		mesh.position.z = -30;
 		this.meshes.push(mesh);
 	}
 	base.addUpdateCallback(()=>{
@@ -44,8 +45,9 @@ tunnelController.prototype.init = function(){
 
 
 	tunnelController.prototype.seed = function(){
-		var x = Math.random()*.1;
+		var x = base.mouse.ratioX*10.;
 		for(var i = 0; i< this.meshes.length; i++){
-			this.meshes[i].material.uniforms.seed.value = Math.random()*100000000000000;
+			this.meshes[i].material.uniforms.seed.value = Math.random()*1000;
+			this.meshes[i].material.uniforms.amp.value = x;
 		}
 	}
