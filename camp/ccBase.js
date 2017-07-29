@@ -20,6 +20,8 @@ ccBase = function(){
 		lastY:0,
 		deltaX:0,
 		deltaY:0,
+		ratioX:0,
+		ratioY:0,
 		leftPressed:false,
 		middlePressed:false,
 		rightPressed:false,
@@ -104,6 +106,8 @@ ccBase = function(){
 		ccBase.prototype.onMouseMove = function (event){
 			this.mouse.x = event.clientX;
 			this.mouse.y = event.clientY;
+			this.mouse.ratioX = event.clientX/window.innerWidth;
+			this.mouse.ratioY = event.clientY/window.innerHeight;
 			this.mouse.deltaX = this.mouse.x - this.mouse.lastX;
 			this.mouse.deltaY = this.mouse.y - this.mouse.lastY;
 			this.mouse.lastX = this.mouse.x;
