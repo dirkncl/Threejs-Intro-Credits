@@ -11,8 +11,8 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
 	<body>
-		<script src="js/three.min.js"></script>		
-		<script src="js/jquery-2.2.0.min.js"></script>		
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"></script>
+        <script src="js/jquery-2.2.0.min.js"></script>		
 		<script src="js/libs/stats.min.js"></script>
 		
 		<script src = "camp/ccBase.js"></script>	
@@ -35,7 +35,12 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src="js/postprocessing/SavePass.js"></script>
 		<script src="js/postprocessing/TexturePass.js"></script>
 		
+        <script src="js/utils/GeometryUtils.js"></script>
+
+        
 		<script src = "fitc/tunnelController.js"></script>
+		<script src = "fitc/textController.js"></script>
+
         <script id="fragmentShader" type="x-shader/x-fragment">
 
 
@@ -88,7 +93,8 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			var tunnels = new tunnelController(base);
 			tunnels.init();
 			
-						
+            var textController = new textController(base);
+            textController.createText("sup", 102);
 		</script>			
 	</body>
 </html>

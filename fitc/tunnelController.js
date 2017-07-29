@@ -46,6 +46,6 @@ tunnelController.prototype.init = function(){
 	tunnelController.prototype.seed = function(){
 		var x = Math.random()*.1;
 		for(var i = 0; i< this.meshes.length; i++){
-			this.meshes[i].material.uniforms.seed.value = Math.random()*100000000000000;
+			this.meshes[i].material.uniforms.seed.value = Math.random()*100;
 		}
 	}
