@@ -11,7 +11,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
 	<body>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"></script>
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.min.js"></script>
         <script src="js/jquery-2.2.0.min.js"></script>		
 		<script src="js/libs/stats.min.js"></script>
 		
@@ -37,12 +37,11 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		
         <script src="js/utils/GeometryUtils.js"></script>
 
-        
 		<script src = "fitc/tunnelController.js"></script>
 		<script src = "fitc/textController.js"></script>
+		<script src = "fitc/nameController.js"></script>
 
         <script id="fragmentShader" type="x-shader/x-fragment">
-
 
 			uniform float seed;
 			uniform float time;
@@ -94,12 +93,20 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			var audio = new ccAudio(base);
 			new ccDebuger(base);
 			new ccMotionBlur(base,.666);			
-						
-			var tunnels = new tunnelController(base);
-			tunnels.init();
 			
             var textController = new textController(base);
-            textController.createText("sup", 12);
+            var nameController = new nameController(base);
+
+            base.loadingManager.onLoad = function (  url, itemsLoaded, itemsTotal ) {                
+                textController.setText(nameController.getNextName());
+            };
+            
+			var tunnels = new tunnelController(base);
+			tunnels.init();
+	
+            nameController.loadNames(base.loadingManager);
+            textController.loadFont(base.loadingManager);
+            
 		</script>			
 	</body>
 </html>
