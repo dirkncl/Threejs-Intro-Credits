@@ -1,32 +1,61 @@
-var names = [];
 var nameIndex = 0;
-
+    
 function nameController(base){
-	this.base = base;    
+	this.base = base;
+    this.textController = new textController(base);
+    this.textController.loadFont();
+    this.names = [];
+    this.numOverlappingTunnels = 10;
 }
 
-nameController.prototype.loadNames = function(loadingManager){
-    var loader = new THREE.FileLoader(loadingManager);
+nameController.prototype.loadNames = function(){
+    var loader = new THREE.FileLoader(base.loadingManager);
+    var self = this;
     
     loader.load(
         'names.txt',
 
         function ( data ) {
-            parseNames(data);
-        },
-        
-        function ( xhr ) {
-            console.error( 'Error loading names' );
+            self.parseNames(data);
         }
+        
     );
 }
 
-nameController.prototype.getNextName = function() {
-    var i = nameIndex;
-    nameIndex = (nameIndex+1) % names.length;
-    return names[i];
+nameController.prototype.showNextName = function() {
+    if (this.names.length > 0) {
+        var i = nameIndex;
+        nameIndex = (nameIndex+1) % this.names.length;
+        
+        var tunnelToEnableIndex = nameIndex + this.numOverlappingTunnels;
+        
+        if (tunnelToEnableIndex < this.names.length) {
+            this.names[tunnelToEnableIndex].show();        
+        }
+
+        this.textController.setText(this.names[i].name)
+    
+        var tunnelToDisableIndex = i-1;
+        
+        if (tunnelToDisableIndex > -1) {
+            this.names[tunnelToDisableIndex].hide();           
+        }
+    }
+}
+    
+nameController.prototype.warmupTunnels = function() {
+    if (this.names.length > 0) {
+        for (var i = 0; i < this.numOverlappingTunnels; i++) {
+            this.names[i].show();
+        }
+    }
 }
 
-function parseNames(data) {
-    names = data.split('\n');
+nameController.prototype.parseNames = function(data) {
+    
+    nameArray = data.split('\n');
+    for (var i = 0; i < nameArray.length; i++) {
+        var name = new FitcName(this.base,nameArray[i], i);
+        this.names.push(name);
+    }
 }

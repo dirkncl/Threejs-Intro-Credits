@@ -11,7 +11,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
 	<body>
-        <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.min.js"></script>
+        <script src="js/three.min.js"></script>
         <script src="js/jquery-2.2.0.min.js"></script>		
 		<script src="js/libs/stats.min.js"></script>
 		
@@ -37,7 +37,8 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		
         <script src="js/utils/GeometryUtils.js"></script>
 
-		<script src = "fitc/tunnelController.js"></script>
+		<script src = "fitc/FitcName.js"></script>
+        <script src = "fitc/tunnelController.js"></script>
 		<script src = "fitc/textController.js"></script>
 		<script src = "fitc/nameController.js"></script>
 
@@ -56,7 +57,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 				//f.r = sin(length(p.y*20.));
 				//f.gb = f.rr;
 				float a = length(f*.4)-.5;
-				a*= v;
+				//a*= v;
 				gl_FragColor = vec4( f, a);
 
 			}
@@ -74,7 +75,6 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 				vUv = uv;
 				vec3 pos = position;
 				pos.xy *=1.-pow(uv.x/6.3, .1);
-				
 				
 				pos.xy += vec2(cos(pos.z*10. - time*(mod(seed, 1.)-.5)*2.+seed), sin(pos.z*200.0 - time*(mod(seed, 1.)-.5)*3.))*amp*uv.x;
 				vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
@@ -94,18 +94,18 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			new ccDebuger(base);
 			new ccMotionBlur(base,.666);			
 			
-            var textController = new textController(base);
             var nameController = new nameController(base);
-
+            nameController.loadNames(base.loadingManager);
+                
             base.loadingManager.onLoad = function (  url, itemsLoaded, itemsTotal ) {                
-                textController.setText(nameController.getNextName());
+                nameController.warmupTunnels();
+                scheduleBeats();
             };
             
-			var tunnels = new tunnelController(base);
-			tunnels.init();
-	
-            nameController.loadNames(base.loadingManager);
-            textController.loadFont(base.loadingManager);
+            function scheduleBeats() {
+                nameController.showNextName();
+                scheduler.callNextBar(scheduleBeats);
+            }
             
 		</script>			
 	</body>

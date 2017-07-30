@@ -2,11 +2,15 @@ var font;
 
 function textController(base){
 	this.base = base;
-    
+    this.material = new THREE.MultiMaterial( [
+        new THREE.MeshBasicMaterial( { color: 0xff0000, shading: THREE.FlatShading } ), // front
+        new THREE.MeshBasicMaterial( { color: 0xff00ff, shading: THREE.SmoothShading } ) // side
+    ] );
+    this.textMesh = new THREE.Mesh();
 }
 
-textController.prototype.loadFont = function(manager){
-    var loader = new THREE.FontLoader(manager);
+textController.prototype.loadFont = function(){
+    var loader = new THREE.FontLoader(base.loadingManager);
     
     loader.load( "fonts/helvetiker_regular.typeface.js", function ( response ) {
         console.log("loaded font");
@@ -37,12 +41,10 @@ textController.prototype.setText = function(text) {
 
     textGeo.center();
 
-    var material = new THREE.MultiMaterial( [
-        new THREE.MeshBasicMaterial( { color: 0xff0000, shading: THREE.FlatShading } ), // front
-        new THREE.MeshBasicMaterial( { color: 0xff00ff, shading: THREE.SmoothShading } ) // side
-    ] );
-    var textMesh1 = new THREE.Mesh( textGeo, material );
-    textMesh1.position.z = -200;
+    base.scene.remove(this.textMesh);
+    
+    this.textMesh = new THREE.Mesh( textGeo, this.material );
+    this.textMesh.position.z = -200;
 
-    base.scene.add( textMesh1 );
+    base.scene.add( this.textMesh );
 }
