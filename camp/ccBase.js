@@ -31,7 +31,8 @@ ccBase = function(){
 	};
 	
 	this.key = {
-		pressed: []
+		pressed: [],
+		justPressed: []
 	}
 	
 	var self = this;
@@ -79,8 +80,8 @@ ccBase = function(){
 			this.time.time = this.time.date.getTime()/1000-this.time.start;
 			this.time.delta = this.time.time-this.time.last;
 			this.time.frame++;
-			
 			callback(this.updateCallbacks);
+			this.key.justPressed = [];
 		}
 		ccBase.prototype.addUpdateCallback = function(func){
 			addCallback(this.updateCallbacks,func);	
@@ -161,7 +162,7 @@ ccBase = function(){
 		ccBase.prototype.onKeyDown = function(event){
 			if(event.repeat)
 				return;
-			this.key.pressed[event.keyCode] = true;
+			this.key.pressed[event.keyCode] = this.key.justPressed[event.keyCode] = true;
 			console.log("key pressed: "+event.keyCode);
 		}
 		
