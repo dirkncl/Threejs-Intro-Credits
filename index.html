@@ -87,6 +87,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 
         		<script id="fontVertexShader" type="x-shader/x-vertex">
 			varying vec2 vUv;
+			uniform float time;
 
 			void main()	{
 				vUv = uv;
@@ -99,15 +100,15 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 
 		<script id="fontFragmentShader" type="x-shader/x-fragment">
 
-			uniform vec2 resolution;
-			uniform float time;
 			varying vec2 vUv;
+
+			uniform float time;
 
 			void main()	{
 
-				vec2 p = uv;
+				vec2 p = vUv;
 				
-				gl_FragColor=vec4(1.0, p.x, p.y,1.0);
+				gl_FragColor=vec4(1.0, 0.0, 1.0,1.0);
 
 			}
 
