@@ -33,14 +33,11 @@ textController.prototype.loadFont = function(){
         console.log(error)
     });
 
-    this.animation = new ccAnimate(base, this.textMesh, new THREE.Vector3( 0, 0, 1 ))
-        base.addUpdateCallback(()=>{
-        this.textMesh.rotateOnAxis(new THREE.Vector3(0,0,1), Math.sin(base.time.time)*0.0025 );
-    });
+    this.textMesh.rotateOnAxis(new THREE.Vector3(0,0,1), Math.sin(base.time.time)*0.0025 );
+  
 }
 
 textController.prototype.setText = function(text) {
-    this.animation.end();
     
     var textGeo = new THREE.TextGeometry( text, {
         font: font,
@@ -65,5 +62,4 @@ textController.prototype.setText = function(text) {
     this.textMesh.position.z = -200;
 
     base.scene.add( this.textMesh );
-    this.animation.start();
 }
