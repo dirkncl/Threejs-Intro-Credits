@@ -6,7 +6,6 @@ function textController(base){
 					time:       { value: 1.0 },
 					resolution: { value: new THREE.Vector2() }
 				};
-    console.log(document.getElementById( 'fontFragmentShader' ).textContent)
     this.material = new THREE.MultiMaterial( [
         new THREE.ShaderMaterial( {          
         
@@ -15,7 +14,7 @@ function textController(base){
     	},
         
         vertexShader: document.getElementById( 'fontVertexShader' ).textContent,
-        fragmentShader: document.getElementById( 'fontFragmentShader' ).textContent,
+        fragmentShader: document.getElementById( 'fontFragmentShader' ).textContent
                                      } ), // front
         new THREE.MeshBasicMaterial( { color: 0x999998, shading: THREE.SmoothShading } ) // side
     ] );
