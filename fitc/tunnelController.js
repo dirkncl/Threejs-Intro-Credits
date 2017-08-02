@@ -1,7 +1,6 @@
 function tunnelController(base, name, index){
 	this.base = base;
     this.name = name;
-    console.log(this.name);
     this.index = index;
 }
 
@@ -24,7 +23,7 @@ tunnelController.prototype.init = function(){
         transparent:true,
         blending: THREE.NormalBlending,
         depthTest: false,
-        wireframe: true
+        wireframe: Math.random()*2 < 1 ? true : false
 	} );
 	
 	this.mesh = new THREE.Mesh(geometry, this.material);
@@ -49,10 +48,8 @@ tunnelController.prototype.seed = function(){
 
 tunnelController.prototype.addToScene = function() {
     base.scene.add(this.mesh);
-    console.log("Adding " + this.name + " tunnel");
 }
 
 tunnelController.prototype.removeFromScene = function() {
     base.scene.remove(this.mesh);
-    console.log("Removing " + this.name + " tunnel");
 }

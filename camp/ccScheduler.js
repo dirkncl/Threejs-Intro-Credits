@@ -1,11 +1,11 @@
 function ccScheduler(base){
 	this.base = base;
 	base.scheduler = this;
-	console.log(base.scheduler);
 	this.frameCallbacks = [];
 	this.timeCallbacks = [];
 	this.sequenceCallbacks = [];
-	
+	this.phraseRangeCallbacks = [];
+    
 	this.bpm = 120;
 	this.remainingTimeInBeat = 0;
 	this.remainingBeatsInBar = 5;
@@ -31,16 +31,34 @@ ccScheduler.prototype.setBPM = function(bpm){
 
 ccScheduler.prototype.update = function(){
 	var length = this.frameCallbacks.length;
-	for(var i = 0; i<length; i++){
+	for(var i = 0; i<length; i++) {
 		var f = this.frameCallbacks[i];
 		f.framesSpent++;
-		if(f.framesSpent >= f.totalFrames){
+		if(f.framesSpent >= f.totalFrames) {
 			f.func();
 			this.frameCallbacks.splice(i, 1);
 			i--;
 			length--;
 		}
 	}
+    
+    length = this.phraseRangeCallbacks.length;
+    for (var i = 0; i < length; i++) {
+        var phraseRangeCallback = this.phraseRangeCallbacks[i];
+        var progress = 1.0 - ((this.remainingBeatsInPhrase-1) * this.totalBeat + this.remainingTimeInBeat) / this.totalPhrase;
+
+        if (progress >= phraseRangeCallback.startPhrase && progress <= phraseRangeCallback.endPhrase) {
+            var rangeLength = phraseRangeCallback.endPhrase - phraseRangeCallback.startPhrase;
+            var normalizedRelativeProgress = (phraseRangeCallback.startPhrase - progress) / rangeLength;
+            phraseRangeCallback.func(normalizedRelativeProgress * -1);
+        }
+        else if (progress > phraseRangeCallback) {
+            phraseRangeCallback.func(1.0);
+            this.frameCallbacks.splice(i, 1);
+			i--;
+			length--;
+        }
+    }
 	
 	length = this.timeCallbacks.length;
 	for(var i = 0; i<length; i++){
@@ -96,11 +114,20 @@ ccScheduler.prototype.callNextBar = function(func){
 		beatsSpent: 0
 	});
 }
+
 ccScheduler.prototype.callNextPhrase = function(func){
 	this.sequenceCallbacks.push({
 		func: func,
 		totalBeats: this.remainingBeatsInPhrase,
 		beatsSpent: 0
+	});
+}
+
+ccScheduler.prototype.callNextPhraseRange = function(func, start, end){
+    this.phraseRangeCallbacks.push({
+		func: func,
+        startPhrase: start,
+        endPhrase: end
 	});
 }
 

@@ -6,6 +6,8 @@ function nameController(base){
     this.textController.loadFont();
     this.names = [];
     this.numOverlappingTunnels = 10;
+    this.fadeInTime = 2.0;
+    this.fadeOutTime = 2.0;
 }
 
 nameController.prototype.loadNames = function(){
@@ -18,7 +20,6 @@ nameController.prototype.loadNames = function(){
         function ( data ) {
             self.parseNames(data);
         }
-        
     );
 }
 
@@ -33,13 +34,17 @@ nameController.prototype.showNextName = function() {
             this.names[tunnelToEnableIndex].show();        
         }
 
-        this.textController.setText(this.names[i].name)
+        this.textController.setText(this.names[i].name);
     
         var tunnelToDisableIndex = i-1;
         
         if (tunnelToDisableIndex > -1) {
             this.names[tunnelToDisableIndex].hide();           
         }
+        
+        base.scheduler.callNextPhraseRange((progress)=>{
+            //console.log("phrase range " + progress);
+        }, 0.5, 1.0);
     }
 }
     

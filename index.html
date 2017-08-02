@@ -24,7 +24,8 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src = "camp/ccAudio.js"></script>	
 		<script src = "camp/ccMesh.js"></script>
 		<script src = "camp/ccMath.js"></script>
-		
+		<script src = "camp/ccAnimate.js"></script>
+        
         <script src = "camp/fx/ccMotionBlur.js"></script>	
 		
 		<script src="js/postprocessing/EffectComposer.js"></script>
@@ -84,6 +85,35 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 
 		</script>
 
+        		<script id="fontVertexShader" type="x-shader/x-vertex">
+			varying vec2 vUv;
+
+			void main()	{
+				vUv = uv;
+
+				gl_Position = vec4( position, 1.0 );
+
+			}
+
+		</script>
+
+		<script id="fontFragmentShader" type="x-shader/x-fragment">
+
+			uniform vec2 resolution;
+			uniform float time;
+			varying vec2 vUv;
+
+			void main()	{
+
+				vec2 p = uv;
+				
+				gl_FragColor=vec4(1.0, p.x, p.y,1.0);
+
+			}
+
+		</script>
+
+        
 		<script>
 			var base = new ccBase();
 			new ccThreeBase(base);
@@ -91,20 +121,22 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			scheduler.init();
 			new ccMath();
 			var audio = new ccAudio(base);
-			new ccDebuger(base);
+			var scheduler = new ccScheduler(base);
+            new ccDebuger(base);
 			new ccMotionBlur(base,.666);			
 			
             var nameController = new nameController(base);
             nameController.loadNames(base.loadingManager);
                 
-            base.loadingManager.onLoad = function (  url, itemsLoaded, itemsTotal ) {                
+            base.loadingManager.onLoad = function (  url, itemsLoaded, itemsTotal ) {
+			    scheduler.init();
                 nameController.warmupTunnels();
                 scheduleBeats();
             };
             
             function scheduleBeats() {
                 nameController.showNextName();
-                scheduler.callNextBar(scheduleBeats);
+                scheduler.callNextPhrase(scheduleBeats);
             }
             
 		</script>			
