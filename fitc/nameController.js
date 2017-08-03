@@ -27,7 +27,8 @@ nameController.prototype.showNextName = function() {
     if (this.names.length > 0) {
         var i = nameIndex;
         nameIndex = (nameIndex+1) % this.names.length;
-        
+        console.log("show next name");
+
         var tunnelToEnableIndex = nameIndex + this.numOverlappingTunnels;
         
         if (tunnelToEnableIndex < this.names.length) {
@@ -63,4 +64,9 @@ nameController.prototype.parseNames = function(data) {
         var name = new FitcName(this.base,nameArray[i], i);
         this.names.push(name);
     }
+}
+
+nameController.prototype.loadLetters = function() {
+    console.log("start loading letters");
+    this.textController.loadLettersForNames(this.names);    
 }

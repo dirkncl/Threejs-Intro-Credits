@@ -18,28 +18,69 @@ function textController(base){
                                      } ), // front
         new THREE.MeshBasicMaterial( { color: 0x999998, shading: THREE.SmoothShading } ) // side
     ] );
-    this.textMesh = new THREE.Mesh();
+    this.letterMeshes = { };
+    this.font = null;
+    this.currentDisplayedMeshes = [ ];
 }
 
-textController.prototype.loadFont = function(){
+textController.prototype.loadFont = function() {
+
     var loader = new THREE.FontLoader(base.loadingManager);
+    var self = this;
     
     loader.load( "fonts/helvetiker_regular.typeface.js", function ( response ) {
-        font = response;
+        self.font = response;
+        console.log(self.font);
     } , function ( ok ) {
 
     } , function(error){
         console.log(error)
-    });
-
-    this.textMesh.rotateOnAxis(new THREE.Vector3(0,0,1), Math.sin(base.time.time)*0.0025 );
-  
+    });  
 }
 
-textController.prototype.setText = function(text) {
+textController.prototype.loadLettersForNames = function(names) {
     
+    var maxLetterCount = {};
+    
+    // Calculate the maximum amounts of each letter you'll need for any name
+    for (var i = 0; i < names.length; i++) {
+        
+        var name = names[i].name;
+        var letterCount = { };
+        
+        for (var j = 0; j < name.length; j++) {
+            letterCount[name[j]] = 0;
+        }
+        for (var j = 0; j < name.length; j++) {
+            letterCount[name[j]] += 1;
+        }
+        
+        for (var key in letterCount) { 
+        
+            if (letterCount[key] > maxLetterCount[key] || maxLetterCount[key] == undefined ) {
+                maxLetterCount[key] = letterCount[key];
+            }
+        }
+    }
+    console.log(maxLetterCount);
+    
+    for (var key in maxLetterCount) {
+        
+        console.log(key + " " + maxLetterCount[key]);
+        this.letterMeshes[key] = [];
+        
+        for (var j = 0; j < maxLetterCount[key]; j++) {
+            
+            this.letterMeshes[key][j] = this.generateTextMesh(key);
+            
+        } 
+    }
+    console.log("end loading letters");
+}
+
+textController.prototype.generateTextMesh = function(text) {
     var textGeo = new THREE.TextGeometry( text, {
-        font: font,
+        font: this.font,
 
         size: 20,
         height: 20,
@@ -53,12 +94,67 @@ textController.prototype.setText = function(text) {
         extrudeMaterial: 1
     });
 
-    textGeo.center();
+    textGeo.computeBoundingBox();
+    var textMesh = new THREE.Mesh( textGeo, this.material );
 
-    base.scene.remove(this.textMesh);
+    return textMesh;
+}
+
+textController.prototype.setText = function(text) {
+
+    var totalWidth = 0.0;
+    var spacing = 0.;
+    var spacings = [];
+    var xPos = 0.0;
+    var letterIndexes = {};
+    this.removeDisplayedMeshes();
     
-    this.textMesh = new THREE.Mesh( textGeo, this.material );
-    this.textMesh.position.z = -200;
+    for (var i = 0; i < text.length; i++) {
+        var key = text[i];
+        
+        if (letterIndexes[key] == undefined) 
+        {
+            letterIndexes[key] = 0;
+        }
+        else 
+        {
+            letterIndexes[key] += 1;
+        }
+        
+        var letterMeshGeometry = this.letterMeshes[key][letterIndexes[key]].geometry;
+        spacings[i] = letterMeshGeometry.boundingBox.getSize().x + spacing;
+        totalWidth += spacings[i];
+        console.log(totalWidth);
+    }
+    
+    letterIndexes = {};
+    xPos -= totalWidth / 2.0;
+    
+    for (var i = 0; i < text.length; i++) {
+        var key = text[i];
 
-    base.scene.add( this.textMesh );
+        if (letterIndexes[key] == undefined) 
+        {
+            letterIndexes[key] = 0;
+        }
+        else 
+        {
+            letterIndexes[key] += 1;
+        }
+        
+        var letterMesh = this.letterMeshes[key][letterIndexes[key]];
+        letterMesh.position.z = -200;
+        letterMesh.position.x = xPos;
+        base.scene.add(letterMesh);
+        xPos += spacings[i];
+        this.currentDisplayedMeshes[i] = letterMesh;
+    }
+}
+
+textController.prototype.removeDisplayedMeshes = function() {
+    
+    for (var i = 0; i < this.currentDisplayedMeshes.length; i++) {
+        base.scene.remove(this.currentDisplayedMeshes[i]);
+    }
+    this.currentDisplayedMeshes = [];
 }

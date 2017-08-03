@@ -24,7 +24,6 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src = "camp/ccAudio.js"></script>	
 		<script src = "camp/ccMesh.js"></script>
 		<script src = "camp/ccMath.js"></script>
-		<script src = "camp/ccAnimate.js"></script>
         
         <script src = "camp/fx/ccMotionBlur.js"></script>	
 		
@@ -129,7 +128,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			
             var nameController = new nameController(base);
             nameController.loadNames(base.loadingManager);
-                
+            
             base.loadingManager.onLoad = function (  url, itemsLoaded, itemsTotal ) {
 			    scheduler.init();
                 nameController.warmupTunnels();
@@ -137,6 +136,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
             };
             
             function scheduleBeats() {
+                nameController.loadLetters();
                 nameController.showNextName();
                 scheduler.callNextPhrase(scheduleBeats);
             }
