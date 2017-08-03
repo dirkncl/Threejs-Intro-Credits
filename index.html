@@ -11,10 +11,6 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
 	<body>
-        <script src="js/three.min.js"></script>
-        <script src="js/jquery-2.2.0.min.js"></script>		
-		<script src="js/libs/stats.min.js"></script>
-		
 		<script src = "camp/ccBase.js"></script>	
 		<script src = "camp/ccThreeBase.js"></script>	
 		<script src = "camp/ccScheduler.js"></script>	
@@ -24,23 +20,28 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src = "camp/ccAudio.js"></script>	
 		<script src = "camp/ccMesh.js"></script>
 		<script src = "camp/ccMath.js"></script>
-        
+		<script src = "camp/ccAnimate.js"></script>
         <script src = "camp/fx/ccMotionBlur.js"></script>	
 		
-		<script src="js/postprocessing/EffectComposer.js"></script>
+        <script src="js/three.min.js"></script>
+        <script src="js/jquery-2.2.0.min.js"></script>		
+		<script src="js/libs/stats.min.js"></script>
+        <script src="js/utils/GeometryUtils.js"></script>	
 		<script src="js/shaders/CopyShader.js"></script>
+		<script src="js/postprocessing/EffectComposer.js"></script>
 		<script src="js/postprocessing/ShaderPass.js"></script>
 		<script src="js/postprocessing/RenderPass.js"></script>
 		<script src="js/postprocessing/MaskPass.js"></script>
 		<script src="js/postprocessing/SavePass.js"></script>
 		<script src="js/postprocessing/TexturePass.js"></script>
 		
-        <script src="js/utils/GeometryUtils.js"></script>
+		<script src="mespeak/mespeak.js"></script>
 
 		<script src = "fitc/FitcName.js"></script>
         <script src = "fitc/tunnelController.js"></script>
 		<script src = "fitc/textController.js"></script>
 		<script src = "fitc/nameController.js"></script>
+		<script src = "fitc/voxGenerator.js"></script>
 
         <script id="fragmentShader" type="x-shader/x-fragment">
 
@@ -125,10 +126,15 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			var audio = new ccAudio(base);
             new ccDebuger(base);
 			new ccMotionBlur(base,.666);			
+			var vox = new voxGenerator(base, ["lol", "sound", "test"]);
+			base.addUpdateCallback(()=>{
+				if(base.key.justPressed[32])
+					meSpeak.play(vox.sound["sound"]);
+			});
 			
             var nameController = new nameController(base);
             nameController.loadNames(base.loadingManager);
-            
+                
             base.loadingManager.onLoad = function (  url, itemsLoaded, itemsTotal ) {
 			    scheduler.init();
                 nameController.warmupTunnels();
@@ -136,7 +142,6 @@ content="▲ FITC Toronto Intro 2017 ▲" />
             };
             
             function scheduleBeats() {
-                nameController.loadLetters();
                 nameController.showNextName();
                 scheduler.callNextPhrase(scheduleBeats);
             }
