@@ -137,6 +137,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
                 
             base.loadingManager.onLoad = function (  url, itemsLoaded, itemsTotal ) {
 			    scheduler.init();
+                nameController.loadLetters();
                 nameController.warmupTunnels();
                 scheduleBeats();
             };
