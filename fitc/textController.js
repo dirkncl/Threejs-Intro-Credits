@@ -170,16 +170,6 @@ textController.prototype.setText = function(text) {
     this.registerAnimations();
 }
 
-function getFunc(self, index ){
-	return function(progress){
-        console.log(index);
-		var scale = (progress)+.01;
-		var mesh = self.currentDisplayedMeshes[index];
-		mesh.scale.set(scale, scale, scale); 
-		mesh.position.z = -300.0 + progress * 100.0;
-	}
-}
-
 textController.prototype.removeDisplayedMeshes = function() {
     
     for (var i = 0; i < this.currentDisplayedMeshes.length; i++) {
@@ -199,8 +189,8 @@ textController.prototype.registerAnimations = function() {
         
 	for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
 	{
-		var t = i*.05;
-		base.scheduler.callNextPhraseRange(getFunc(self, i), t, t+0.15);
+		var mesh = self.currentDisplayedMeshes[i];
+		TweenMax.to(mesh.scale, 2, {x:1, y:1, z:1, delay:i*.0666, ease: Elastic.easeOut});
 	}        
     
     base.scheduler.callNextPhraseRange((progress)=>{
