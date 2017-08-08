@@ -180,17 +180,20 @@ textController.prototype.removeDisplayedMeshes = function() {
 
 textController.prototype.registerAnimations = function() {
     var self = this;
-	var totalNameTime = .25;
-    
-    base.scheduler.callNextPhraseRange((progress)=>{
-        var s = 1.0-progress;
-        self.setScale(s+.01);    
-    }, 0.85, 1.0);    
-        
+	var delayPerLetter = .0666;
+	var easeOutTime = 1;
+	var startEaseOut = base.scheduler.totalPhrase-easeOutTime-delayPerLetter*this.currentDisplayedMeshes.length;
+	
+   
 	for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
 	{
-		var mesh = self.currentDisplayedMeshes[i];
+		var mesh = this.currentDisplayedMeshes[i];
 		TweenMax.to(mesh.scale, 2, {x:1, y:1, z:1, delay:i*.0666, ease: Elastic.easeOut});
+	}  
+	for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
+	{
+		var mesh = this.currentDisplayedMeshes[i];
+		TweenMax.to(mesh.scale, easeOutTime, {x:.01, y:.01, z:.01, delay:startEaseOut+i*.0666, ease: Back.easeIn});
 	}        
     
     base.scheduler.callNextPhraseRange((progress)=>{
