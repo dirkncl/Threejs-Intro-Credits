@@ -1,26 +1,38 @@
 var font;
 
+
 function textController(base){
 	this.base = base;
     this.uniforms = {
 					time:       { type:"f", value: 0.0 },
                     intensity : { type:"f", value: 0.0 }
 				};
-    this.material = new THREE.MultiMaterial( [
-        new THREE.ShaderMaterial( {          
+
+    
+    var frontMaterial = new THREE.ShaderMaterial( {          
+        uniforms : this.uniforms,
+        transparent:true,
+    } );
+    
+    var sideMaterial = new THREE.ShaderMaterial( {          
             uniforms : this.uniforms,
-            vertexShader: document.getElementById( 'fontVertexShader' ).textContent,
-            fragmentShader: document.getElementById( 'fontFragmentShader' ).textContent,
             transparent:true,
-         } ),
-        
-        new THREE.ShaderMaterial( {          
-            uniforms : this.uniforms,
-            vertexShader: document.getElementById( 'fontVertexShader' ).textContent,
-            fragmentShader: document.getElementById( 'fontSideFragmentShader' ).textContent,
-            transparent:true,
-         } ),
-    ] );
+    } );
+    
+    this.base.load("shaders/fontfront.frag", (x)=>{
+        frontMaterial.fragmentShader = x;
+    } );
+	
+    this.base.load("shaders/fontside.frag", (x)=>{
+        sideMaterial.fragmentShader = x;
+    } );
+    
+    this.base.load("shaders/font.vert", (x)=>{
+        frontMaterial.vertexShader = x;
+        sideMaterial.vertexShader = x;
+    } );
+    
+    this.material = new THREE.MultiMaterial( [frontMaterial, sideMaterial ] );
     this.letterMeshes = { };
     this.font = null;
     this.currentDisplayedMeshes = [ ];
