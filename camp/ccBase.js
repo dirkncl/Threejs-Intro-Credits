@@ -192,3 +192,16 @@ function removeCallback (removeFrom,func){
 		removeFrom.splice(i,1);
 	}
 }
+
+ccBase.prototype.load = function(url, callback){
+	var request = new XMLHttpRequest();
+	request.open("GET", url);
+	request.onreadystatechange = ()=>{
+		if (request.readyState == 4 && request.status == 200)
+			callback(request.responseText);
+	};
+	request.send();
+}
+ccBase.prototype.loadAndSet = function(url, object, varName){
+	this.load(url, (x)=>{object[varName]=x;});
+}
