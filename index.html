@@ -42,97 +42,6 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src = "fitc/textController.js"></script>
 		<script src = "fitc/nameController.js"></script>
 		<script src = "fitc/voxGenerator.js"></script>
-
-        <script id="fragmentShader" type="x-shader/x-fragment">
-
-			uniform float seed;
-			uniform float time;
-            uniform float intensity;
-            
-			varying vec2 vUv;
-
-			void main( void ) {
-				vec2 p = vUv.yx;
-				float v = smoothstep(6., 3., p.y);
-				p.y-=sin(time+seed)*.8-time;
-				vec3 f = sin(vec3(seed*.1+p.x, sin(v*10.), seed+v*2.5) +p.x*6.+v*sin(p.y*10.+seed*4.)+(v*sin(seed*.5)*10.)+(v+sin(time*.4)*10.))*.5+.5;
-				//f.r = sin(length(p.y*20.));
-				//f.gb = f.rr;
-				float a = length(f*.4)-.5;
-				//a*= v;
-				gl_FragColor = vec4( f, a*intensity);
-
-			}
-
-		</script>
-
-		<script id="vertexShader" type="x-shader/x-vertex">
-			varying vec2 vUv;
-			uniform float time;
-			uniform float amp;
-			uniform float seed;
-
-			void main()
-			{
-				vUv = uv;
-				vec3 pos = position;
-				pos.xy *=1.-pow(uv.x/6.3, .1);
-				
-				pos.xy += vec2(cos(pos.z*10. - time*(mod(seed, 1.)-.5)*2.+seed), sin(pos.z*200.0 - time*(mod(seed, 1.)-.5)*3.))*amp*uv.x;
-				vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
-
-				gl_Position = projectionMatrix * mvPosition;
-			}
-
-		</script>
-
-        <script id="fontVertexShader" type="x-shader/x-vertex">
-			varying vec2 vUv;
-			uniform float time;
-            uniform float intensity;
-
-			void main()	{
-				vUv = uv;
-
-				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-
-				gl_Position = projectionMatrix * mvPosition;
-
-			}
-
-		</script>
-
-		<script id="fontFragmentShader" type="x-shader/x-fragment">
-
-			varying vec2 vUv;
-            uniform float intensity;
-			uniform float time;
-
-			void main()	{
-
-				vec2 p = vUv;
-				
-				gl_FragColor=vec4(1.0, sin(p.y*5. + intensity + time)*0.5+0.5, intensity,intensity);
-
-			}
-
-		</script>
-        
-		<script id="fontSideFragmentShader" type="x-shader/x-fragment">
-
-			varying vec2 vUv;
-            uniform float intensity;
-			uniform float time;
-
-			void main()	{
-
-				vec2 p = vUv;
-				
-				gl_FragColor=vec4(0.0, cos(p.y*3. + intensity + time*5.)*0.5+0.5, intensity,intensity);
-
-			}
-
-		</script>
         
 		<script>
 			var base = new ccBase();
@@ -157,11 +66,9 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			
 			base.load("names.txt", (x)=>{console.log("lol "+x);});
 			
-            
             base.loadingManager.onLoad = function (  url, itemsLoaded, itemsTotal ) {
                 
                 if (numLoads == 3) {
-
                     nameController.loadLetters();
                     nameController.warmupTunnels();
                     scheduleBeats();

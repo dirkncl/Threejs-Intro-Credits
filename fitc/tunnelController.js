@@ -8,6 +8,7 @@ tunnelController.prototype.init = function(){
 
 	var geometry = ccMesh.cone(52,52.0,1.0,100.);
 	geometry = ccMesh.scaleUV(geometry, 6.28, 0);
+    var self = this;
     
     this.uniforms = {
         time: {type:"f", value: 1.0 },
@@ -18,15 +19,21 @@ tunnelController.prototype.init = function(){
     
 	this.material = new THREE.ShaderMaterial( {
         uniforms : this.uniforms,
-        vertexShader: document.getElementById( 'vertexShader' ).textContent,
-        fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
         side:THREE.BackSide,
         transparent:true,
         blending: THREE.NormalBlending,
         depthTest: false,
         wireframe: Math.random()*2 < 1 ? true : false
 	} );
+    
+    this.base.load("shaders/tunnel.frag", (x)=>{
+        self.material.fragmentShader = x;
+    } );
 	
+    this.base.load("shaders/tunnel.vert", (x)=>{
+        self.material.vertexShader = x;
+    } );
+    
 	this.mesh = new THREE.Mesh(geometry, this.material);
     this.mesh.position.z = -30;
     this.mesh.rotation.y = Math.PI;

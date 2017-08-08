@@ -6,21 +6,32 @@ function textController(base){
 					time:       { type:"f", value: 0.0 },
                     intensity : { type:"f", value: 0.0 }
 				};
-    this.material = new THREE.MultiMaterial( [
-        new THREE.ShaderMaterial( {          
+
+    
+    var frontMaterial = new THREE.ShaderMaterial( {          
+        uniforms : this.uniforms,
+        transparent:true,
+    } );
+    
+    var sideMaterial = new THREE.ShaderMaterial( {          
             uniforms : this.uniforms,
-            vertexShader: document.getElementById( 'fontVertexShader' ).textContent,
-            fragmentShader: document.getElementById( 'fontFragmentShader' ).textContent,
             transparent:true,
-         } ),
-        
-        new THREE.ShaderMaterial( {          
-            uniforms : this.uniforms,
-            vertexShader: document.getElementById( 'fontVertexShader' ).textContent,
-            fragmentShader: document.getElementById( 'fontSideFragmentShader' ).textContent,
-            transparent:true,
-         } ),
-    ] );
+    } );
+    
+    this.base.load("shaders/fontfront.frag", (x)=>{
+        frontMaterial.fragmentShader = x;
+    } );
+	
+    this.base.load("shaders/fontside.frag", (x)=>{
+        sideMaterial.fragmentShader = x;
+    } );
+    
+    this.base.load("shaders/font.vert", (x)=>{
+        frontMaterial.vertexShader = x;
+        sideMaterial.vertexShader = x;
+    } );
+    
+    this.material = new THREE.MultiMaterial( [frontMaterial, sideMaterial ] );
     this.letterMeshes = { };
     this.font = null;
     this.currentDisplayedMeshes = [ ];
@@ -161,6 +172,7 @@ textController.prototype.setText = function(text) {
         meshIndex++;
     }
     
+    this.setScale(0.01);
     this.registerAnimations();
 }
 
@@ -178,7 +190,7 @@ textController.prototype.registerAnimations = function() {
     
     base.scheduler.callNextPhraseRange((progress)=>{
         var s = 1.0-progress;
-        self.setScale(s);    
+        self.setScale(s + 0.01);    
         self.uniforms.intensity.value = s;
     }, 0.85, 1.0);
 
@@ -187,11 +199,11 @@ textController.prototype.registerAnimations = function() {
         
         for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
         {
-            var scale = progress;
+            var scale = 0.01+progress;
             var mesh = this.currentDisplayedMeshes[i];
             mesh.scale.x = scale;
             mesh.scale.y = scale;        
-            mesh.scale.z = scale
+            mesh.scale.z = scale;
             mesh.position.z = -300.0 + progress * 100.0;
         }        
     }, 0.0, 0.15);
