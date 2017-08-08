@@ -19,13 +19,8 @@ function textController(base){
             transparent:true,
     } );
     
-    this.base.load("shaders/fontfront.frag", (x)=>{
-        frontMaterial.fragmentShader = x;
-    } );
-	
-    this.base.load("shaders/fontside.frag", (x)=>{
-        sideMaterial.fragmentShader = x;
-    } );
+    this.base.loadAndSet("shaders/fontfront.frag", frontMaterial,"fragmentShader");	
+    this.base.loadAndSet("shaders/fontside.frag",  sideMaterial,"fragmentShader");
     
     this.base.load("shaders/font.vert", (x)=>{
         frontMaterial.vertexShader = x;

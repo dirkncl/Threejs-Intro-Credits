@@ -63,15 +63,16 @@ content="▲ FITC Toronto Intro 2017 ▲" />
             var nameController = new nameController(base);
             nameController.loadNames(base.loadingManager);
             scheduler.init();
-						
-            base.loadingManager.onLoad = function (  url, itemsLoaded, itemsTotal ) {
-                
-                if (numLoads == 3) {
+			
+			base.load("names.txt", (x)=>{console.log("lol "+x);});
+			
+            base.loadingManager.onProgress = function (  url, itemsLoaded, itemsTotal ) {
+                console.log(itemsLoaded+"   "+itemsTotal);
+                if (itemsLoaded == 6) {
                     nameController.loadLetters();
                     nameController.warmupTunnels();
-                    scheduleBeats();
+                	scheduler.callNextPhrase(scheduleBeats);
                 }
-                numLoads++;
 			};
             
             function scheduleBeats() {
