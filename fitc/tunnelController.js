@@ -9,14 +9,15 @@ tunnelController.prototype.init = function(){
 	var geometry = ccMesh.cone(52,52.0,1.0,100.);
 	geometry = ccMesh.scaleUV(geometry, 6.28, 0);
     
+    this.uniforms = {
+        time: {type:"f", value: 1.0 },
+        seed: {type:"f", value: 1.0 },
+        amp: {type:"f", value: 10.0 },
+        intensity: { type:"f", value : 1.0 }
+    };
+    
 	this.material = new THREE.ShaderMaterial( {
-        
-        uniforms: {
-            time: {type:"f", value: 1.0 },
-            seed: {type:"f", value: 1.0 },
-            amp: {type:"f", value: 10.0 }
-    	},
-        
+        uniforms : this.uniforms,
         vertexShader: document.getElementById( 'vertexShader' ).textContent,
         fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
         side:THREE.BackSide,
@@ -53,3 +54,22 @@ tunnelController.prototype.addToScene = function() {
 tunnelController.prototype.removeFromScene = function() {
     base.scene.remove(this.mesh);
 }
+
+tunnelController.prototype.HideThisPhrase = function() {
+    
+    var self = this;
+    
+    base.scheduler.callNextPhraseRange((progress)=>{
+        self.uniforms.intensity.value = 1.0-progress;
+    }, 0.85, 1.0);
+}
+
+tunnelController.prototype.ShowThisPhrase = function() {
+    
+    var self = this;
+    
+    base.scheduler.callNextPhraseRange((progress)=>{
+        self.uniforms.intensity.value = progress;
+    }, 0.0, 0.15);
+}
+

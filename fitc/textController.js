@@ -2,21 +2,24 @@ var font;
 
 function textController(base){
 	this.base = base;
-    var uniforms = {
-					time:       { value: 1.0 },
-					resolution: { value: new THREE.Vector2() }
+    this.uniforms = {
+					time:       { type:"f", value: 0.0 },
+                    intensity : { type:"f", value: 0.0 }
 				};
     this.material = new THREE.MultiMaterial( [
         new THREE.ShaderMaterial( {          
+            uniforms : this.uniforms,
+            vertexShader: document.getElementById( 'fontVertexShader' ).textContent,
+            fragmentShader: document.getElementById( 'fontFragmentShader' ).textContent,
+            transparent:true,
+         } ),
         
-        uniforms: {
-            time: {type:"f", value: 1.0 }
-    	},
-        
-        vertexShader: document.getElementById( 'fontVertexShader' ).textContent,
-        fragmentShader: document.getElementById( 'fontFragmentShader' ).textContent
-                                     } ), // front
-        new THREE.MeshBasicMaterial( { color: 0x999998, shading: THREE.SmoothShading } ) // side
+        new THREE.ShaderMaterial( {          
+            uniforms : this.uniforms,
+            vertexShader: document.getElementById( 'fontVertexShader' ).textContent,
+            fragmentShader: document.getElementById( 'fontSideFragmentShader' ).textContent,
+            transparent:true,
+         } ),
     ] );
     this.letterMeshes = { };
     this.font = null;
@@ -30,7 +33,6 @@ textController.prototype.loadFont = function() {
     
     loader.load( "fonts/helvetiker_regular.typeface.js", function ( response ) {
         self.font = response;
-        console.log(self.font);
     } , function ( ok ) {
 
     } , function(error){
@@ -62,11 +64,9 @@ textController.prototype.loadLettersForNames = function(names) {
             }
         }
     }
-    console.log(maxLetterCount);
     
     for (var key in maxLetterCount) {
         
-        console.log(key + " " + maxLetterCount[key]);
         this.letterMeshes[key] = [];
         
         for (var j = 0; j < maxLetterCount[key]; j++) {
@@ -104,6 +104,7 @@ textController.prototype.setText = function(text) {
 
     var totalWidth = 0.0;
     var spacing = 0.;
+    var spaceWidth = 10.0;
     var spacings = [];
     var xPos = 0.0;
     var letterIndexes = {};
@@ -124,15 +125,24 @@ textController.prototype.setText = function(text) {
         var letterMeshGeometry = this.letterMeshes[key][letterIndexes[key]].geometry;
         spacings[i] = letterMeshGeometry.boundingBox.getSize().x + spacing;
         totalWidth += spacings[i];
-        console.log(totalWidth);
     }
     
     letterIndexes = {};
-    xPos -= totalWidth / 2.0;
+    
+    // This assumes one space in the name
+    xPos -= totalWidth / 2.0 - spaceWidth*0.5;
+    
+    var meshIndex = 0;
     
     for (var i = 0; i < text.length; i++) {
         var key = text[i];
 
+        if (key == ' ') 
+        {
+            xPos += spaceWidth;
+            continue;
+        }
+        
         if (letterIndexes[key] == undefined) 
         {
             letterIndexes[key] = 0;
@@ -143,12 +153,15 @@ textController.prototype.setText = function(text) {
         }
         
         var letterMesh = this.letterMeshes[key][letterIndexes[key]];
-        letterMesh.position.z = -200;
+        letterMesh.position.z = -300;
         letterMesh.position.x = xPos;
         base.scene.add(letterMesh);
         xPos += spacings[i];
-        this.currentDisplayedMeshes[i] = letterMesh;
+        this.currentDisplayedMeshes[meshIndex] = letterMesh;
+        meshIndex++;
     }
+    
+    this.registerAnimations();
 }
 
 textController.prototype.removeDisplayedMeshes = function() {
@@ -157,4 +170,50 @@ textController.prototype.removeDisplayedMeshes = function() {
         base.scene.remove(this.currentDisplayedMeshes[i]);
     }
     this.currentDisplayedMeshes = [];
+}
+
+textController.prototype.registerAnimations = function() {
+    
+    var self = this;
+    
+    base.scheduler.callNextPhraseRange((progress)=>{
+        var s = 1.0-progress;
+        self.setScale(s);    
+        self.uniforms.intensity.value = s;
+    }, 0.85, 1.0);
+
+    base.scheduler.callNextPhraseRange((progress)=>{
+        self.uniforms.intensity.value = progress;
+        
+        for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
+        {
+            var scale = progress;
+            var mesh = this.currentDisplayedMeshes[i];
+            mesh.scale.x = scale;
+            mesh.scale.y = scale;        
+            mesh.scale.z = scale
+            mesh.position.z = -300.0 + progress * 100.0;
+        }        
+    }, 0.0, 0.15);
+    
+    base.scheduler.callNextPhraseRange((progress)=>{
+
+        for (var i = 0; i < self.currentDisplayedMeshes.length; i++)
+        {
+            var mesh = self.currentDisplayedMeshes[i];
+            mesh.position.y = 1.0 + Math.sin(i + self.base.time.time)*2;
+            this.uniforms.time.value = base.time.time;
+        }
+        
+    }, 0.0, 1.0);
+}
+
+textController.prototype.setScale = function(scale) {
+    for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
+    {
+        var mesh = this.currentDisplayedMeshes[i];
+        mesh.scale.x = scale;
+        mesh.scale.y = scale;        
+        mesh.scale.z = scale;        
+    }        
 }

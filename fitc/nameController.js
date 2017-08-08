@@ -5,9 +5,7 @@ function nameController(base){
     this.textController = new textController(base);
     this.textController.loadFont();
     this.names = [];
-    this.numOverlappingTunnels = 10;
-    this.fadeInTime = 2.0;
-    this.fadeOutTime = 2.0;
+    this.numOverlappingTunnels = 5;
 }
 
 nameController.prototype.loadNames = function(){
@@ -27,7 +25,6 @@ nameController.prototype.showNextName = function() {
     if (this.names.length > 0) {
         var i = nameIndex;
         nameIndex = (nameIndex+1) % this.names.length;
-        console.log("show next name");
 
         var tunnelToEnableIndex = nameIndex + this.numOverlappingTunnels;
         
@@ -36,16 +33,13 @@ nameController.prototype.showNextName = function() {
         }
 
         this.textController.setText(this.names[i].name);
-    
-        var tunnelToDisableIndex = i-1;
+        this.textController.setScale(0.0);
+        
+        var tunnelToDisableIndex = i;
         
         if (tunnelToDisableIndex > -1) {
             this.names[tunnelToDisableIndex].hide();           
         }
-        
-        base.scheduler.callNextPhraseRange((progress)=>{
-            //console.log("phrase range " + progress);
-        }, 0.5, 1.0);
     }
 }
     

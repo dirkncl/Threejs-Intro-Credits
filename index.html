@@ -47,7 +47,8 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 
 			uniform float seed;
 			uniform float time;
-
+            uniform float intensity;
+            
 			varying vec2 vUv;
 
 			void main( void ) {
@@ -59,7 +60,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 				//f.gb = f.rr;
 				float a = length(f*.4)-.5;
 				//a*= v;
-				gl_FragColor = vec4( f, a);
+				gl_FragColor = vec4( f, a*intensity);
 
 			}
 
@@ -85,9 +86,10 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 
 		</script>
 
-        		<script id="fontVertexShader" type="x-shader/x-vertex">
+        <script id="fontVertexShader" type="x-shader/x-vertex">
 			varying vec2 vUv;
 			uniform float time;
+            uniform float intensity;
 
 			void main()	{
 				vUv = uv;
@@ -103,30 +105,47 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script id="fontFragmentShader" type="x-shader/x-fragment">
 
 			varying vec2 vUv;
-
+            uniform float intensity;
 			uniform float time;
 
 			void main()	{
 
 				vec2 p = vUv;
 				
-				gl_FragColor=vec4(1.0, 0.0, 1.0,1.0);
+				gl_FragColor=vec4(1.0, sin(p.y*5. + intensity + time)*0.5+0.5, intensity,intensity);
 
 			}
 
 		</script>
+        
+		<script id="fontSideFragmentShader" type="x-shader/x-fragment">
 
+			varying vec2 vUv;
+            uniform float intensity;
+			uniform float time;
+
+			void main()	{
+
+				vec2 p = vUv;
+				
+				gl_FragColor=vec4(0.0, cos(p.y*3. + intensity + time*5.)*0.5+0.5, intensity,intensity);
+
+			}
+
+		</script>
         
 		<script>
 			var base = new ccBase();
 			new ccThreeBase(base);
 			var scheduler = new ccScheduler(base);
-			scheduler.init();
+            scheduler.setBPM(160);
 			new ccMath();
 			var audio = new ccAudio(base);
             new ccDebuger(base);
-			new ccMotionBlur(base,.666);			
+			new ccMotionBlur(base,.8);			
 			var vox = new voxGenerator(base, ["lol", "sound", "test"]);
+            var numLoads = 0;
+            
 			base.addUpdateCallback(()=>{
 				if(base.key.justPressed[32])
 					meSpeak.play(vox.sound["sound"]);
@@ -134,13 +153,18 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			
             var nameController = new nameController(base);
             nameController.loadNames(base.loadingManager);
-                
+            scheduler.init();
+            
             base.loadingManager.onLoad = function (  url, itemsLoaded, itemsTotal ) {
-			    scheduler.init();
-                nameController.loadLetters();
-                nameController.warmupTunnels();
-                scheduleBeats();
-            };
+                
+                if (numLoads == 3) {
+
+                    nameController.loadLetters();
+                    nameController.warmupTunnels();
+                    scheduleBeats();
+                }
+                numLoads++;
+			};
             
             function scheduleBeats() {
                 nameController.showNextName();

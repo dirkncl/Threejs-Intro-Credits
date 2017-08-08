@@ -13,13 +13,14 @@ function ccScheduler(base){
 	this.totalBeat = 0;
 	this.totalBar = 0;
 	this.totalPhrase = 0;
+	this.self = this;
 	
 	this.setBPM(this.bpm);
 }
 
 ccScheduler.prototype.init = function(){
-	var self = this;
-	this.base.addUpdateCallback(()=>{self.update();});
+    var self = this.self;
+	self.base.addUpdateCallback(()=>{self.update();});
 }
 
 ccScheduler.prototype.setBPM = function(bpm){
