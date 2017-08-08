@@ -5,7 +5,7 @@ function textController(base){
 	this.base = base;
     this.uniforms = {
 					time:       { type:"f", value: 0.0 },
-                    intensity : { type:"f", value: 0.0 }
+                    intensity : { type:"f", value: 1.0 }
 				};
 
     
@@ -177,7 +177,7 @@ textController.prototype.setText = function(text) {
 
 function getFunc(self, index ){
 	return function(progress){
-		self.uniforms.intensity.value = progress;
+        console.log(index);
 		var scale = (progress)+.01;
 		var mesh = self.currentDisplayedMeshes[index];
 		mesh.scale.set(scale, scale, scale); 
@@ -200,7 +200,6 @@ textController.prototype.registerAnimations = function() {
     base.scheduler.callNextPhraseRange((progress)=>{
         var s = 1.0-progress;
         self.setScale(s+.01);    
-        self.uniforms.intensity.value = s;
     }, 0.85, 1.0);    
         
 	for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
