@@ -42,24 +42,6 @@ ccScheduler.prototype.update = function(){
 			length--;
 		}
 	}
-    
-    length = this.phraseRangeCallbacks.length;
-    for (var i = 0; i < length; i++) {
-        var phraseRangeCallback = this.phraseRangeCallbacks[i];
-        var progress = 1.0 - ((this.remainingBeatsInPhrase-1) * this.totalBeat + this.remainingTimeInBeat) / this.totalPhrase;
-
-        if (progress >= phraseRangeCallback.startPhrase && progress <= phraseRangeCallback.endPhrase) {
-            var rangeLength = phraseRangeCallback.endPhrase - phraseRangeCallback.startPhrase;
-            var normalizedRelativeProgress = (phraseRangeCallback.startPhrase - progress) / rangeLength;
-            phraseRangeCallback.func(normalizedRelativeProgress * -1);
-        }
-        else if (progress > phraseRangeCallback) {
-            phraseRangeCallback.func(1.0);
-            this.frameCallbacks.splice(i, 1);
-			i--;
-			length--;
-        }
-    }
 	
 	length = this.timeCallbacks.length;
 	for(var i = 0; i<length; i++){
@@ -72,7 +54,25 @@ ccScheduler.prototype.update = function(){
 			length--;
 		}
 	}
-	
+    
+    length = this.phraseRangeCallbacks.length;
+	var progress = 1.0 - ((this.remainingBeatsInPhrase-1) * this.totalBeat + this.remainingTimeInBeat) / this.totalPhrase;
+    for (var i = 0; i < length; i++) {
+        var phraseRangeCallback = this.phraseRangeCallbacks[i];
+		
+        if (progress >= phraseRangeCallback.startPhrase && progress <= phraseRangeCallback.endPhrase) {
+            var rangeLength = phraseRangeCallback.endPhrase - phraseRangeCallback.startPhrase;
+            var normalizedRelativeProgress = (phraseRangeCallback.startPhrase - progress) / rangeLength;
+            phraseRangeCallback.func(normalizedRelativeProgress * -1);
+        }
+        else if (progress > phraseRangeCallback) {
+            phraseRangeCallback.func(1.0);
+            this.phraseRangeCallbacks.splice(i, 1);
+			i--;
+			length--;
+        }
+    }
+		
 	this.remainingTimeInBeat -= this.base.time.delta;
 	
 	if(this.remainingTimeInBeat < this.base.time.delta*.5){
@@ -83,8 +83,10 @@ ccScheduler.prototype.update = function(){
 			this.remainingBeatsInBar = 4;
 		
 		this.remainingBeatsInPhrase--;
-		if(this.remainingBeatsInPhrase==0)
+		if(this.remainingBeatsInPhrase==0){
 			this.remainingBeatsInPhrase = 16;
+			this.phraseRangeCallbacks = [];
+		}
 		
 		length = this.sequenceCallbacks.length;
 		for(var i = 0; i<length; i++){

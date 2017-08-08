@@ -6,32 +6,21 @@ function textController(base){
 					time:       { type:"f", value: 0.0 },
                     intensity : { type:"f", value: 0.0 }
 				};
-
-    
-    var frontMaterial = new THREE.ShaderMaterial( {          
-        uniforms : this.uniforms,
-        transparent:true,
-    } );
-    
-    var sideMaterial = new THREE.ShaderMaterial( {          
+    this.material = new THREE.MultiMaterial( [
+        new THREE.ShaderMaterial( {          
             uniforms : this.uniforms,
+            vertexShader: document.getElementById( 'fontVertexShader' ).textContent,
+            fragmentShader: document.getElementById( 'fontFragmentShader' ).textContent,
             transparent:true,
-    } );
-    
-    this.base.load("shaders/fontfront.frag", (x)=>{
-        frontMaterial.fragmentShader = x;
-    } );
-	
-    this.base.load("shaders/fontside.frag", (x)=>{
-        sideMaterial.fragmentShader = x;
-    } );
-    
-    this.base.load("shaders/font.vert", (x)=>{
-        frontMaterial.vertexShader = x;
-        sideMaterial.vertexShader = x;
-    } );
-    
-    this.material = new THREE.MultiMaterial( [frontMaterial, sideMaterial ] );
+         } ),
+        
+        new THREE.ShaderMaterial( {          
+            uniforms : this.uniforms,
+            vertexShader: document.getElementById( 'fontVertexShader' ).textContent,
+            fragmentShader: document.getElementById( 'fontSideFragmentShader' ).textContent,
+            transparent:true,
+         } ),
+    ] );
     this.letterMeshes = { };
     this.font = null;
     this.currentDisplayedMeshes = [ ];
@@ -112,7 +101,6 @@ textController.prototype.generateTextMesh = function(text) {
 }
 
 textController.prototype.setText = function(text) {
-
     var totalWidth = 0.0;
     var spacing = 0.;
     var spaceWidth = 10.0;
@@ -172,8 +160,17 @@ textController.prototype.setText = function(text) {
         meshIndex++;
     }
     
-    this.setScale(0.01);
     this.registerAnimations();
+}
+
+function getFunc(self, index ){
+	return function(progress){
+		self.uniforms.intensity.value = progress;
+		var scale = (progress)+.01;
+		var mesh = self.currentDisplayedMeshes[index];
+		mesh.scale.set(scale, scale, scale); 
+		mesh.position.z = -300.0 + progress * 100.0;
+	}
 }
 
 textController.prototype.removeDisplayedMeshes = function() {
@@ -185,28 +182,20 @@ textController.prototype.removeDisplayedMeshes = function() {
 }
 
 textController.prototype.registerAnimations = function() {
-    
     var self = this;
+	var totalNameTime = .25;
     
     base.scheduler.callNextPhraseRange((progress)=>{
         var s = 1.0-progress;
-        self.setScale(s + 0.01);    
+        self.setScale(s+.01);    
         self.uniforms.intensity.value = s;
-    }, 0.85, 1.0);
-
-    base.scheduler.callNextPhraseRange((progress)=>{
-        self.uniforms.intensity.value = progress;
+    }, 0.85, 1.0);    
         
-        for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
-        {
-            var scale = 0.01+progress;
-            var mesh = this.currentDisplayedMeshes[i];
-            mesh.scale.x = scale;
-            mesh.scale.y = scale;        
-            mesh.scale.z = scale;
-            mesh.position.z = -300.0 + progress * 100.0;
-        }        
-    }, 0.0, 0.15);
+	for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
+	{
+		var t = i*.05;
+		base.scheduler.callNextPhraseRange(getFunc(self, i), t, t+0.15);
+	}        
     
     base.scheduler.callNextPhraseRange((progress)=>{
 
@@ -224,8 +213,6 @@ textController.prototype.setScale = function(scale) {
     for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
     {
         var mesh = this.currentDisplayedMeshes[i];
-        mesh.scale.x = scale;
-        mesh.scale.y = scale;        
-        mesh.scale.z = scale;        
+        mesh.scale.set(scale, scale, scale);        
     }        
 }

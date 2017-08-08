@@ -33,7 +33,7 @@ nameController.prototype.showNextName = function() {
         }
 
         this.textController.setText(this.names[i].name);
-        this.textController.setScale(0.0);
+        this.textController.setScale(0.01);
         
         var tunnelToDisableIndex = i;
         
