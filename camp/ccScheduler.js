@@ -30,6 +30,12 @@ ccScheduler.prototype.setBPM = function(bpm){
 	this.totalPhrase = this.totalBeat*16;
 }
 
+ccScheduler.prototype.reset = function(){
+	this.remainingTimeInBeat = this.totalBeat;
+	this.remainingBeatsInBar = 4;
+	this.remainingBeatsInPhrase = 16;
+}
+
 ccScheduler.prototype.update = function(){
 	var length = this.frameCallbacks.length;
 	for(var i = 0; i<length; i++) {

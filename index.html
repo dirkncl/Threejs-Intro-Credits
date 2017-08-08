@@ -71,7 +71,8 @@ content="▲ FITC Toronto Intro 2017 ▲" />
                 if (itemsLoaded == 6) {
                     nameController.loadLetters();
                     nameController.warmupTunnels();
-                	scheduler.callNextPhrase(scheduleBeats);
+					scheduler.reset();
+                	scheduleBeats();
                 }
 			};
             
