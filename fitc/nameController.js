@@ -5,7 +5,7 @@ function nameController(base){
     this.textController = new textController(base);
     this.textController.loadFont();
     this.names = [];
-    this.numOverlappingTunnels = 5;
+    this.numOverlappingTunnels = 1;
 }
 
 nameController.prototype.loadNames = function(){
@@ -23,23 +23,22 @@ nameController.prototype.loadNames = function(){
 
 nameController.prototype.showNextName = function() {
     if (this.names.length > 0) {
-        var i = nameIndex;
-        nameIndex = (nameIndex+1) % this.names.length;
-
         var tunnelToEnableIndex = nameIndex + this.numOverlappingTunnels;
         
         if (tunnelToEnableIndex < this.names.length) {
             this.names[tunnelToEnableIndex].show();        
         }
 
-        this.textController.setText(this.names[i].name);
+        this.textController.setText(this.names[nameIndex].name);
         this.textController.setScale(0.01);
         
-        var tunnelToDisableIndex = i;
+        this.names[nameIndex].fadeOutTunnelThisPhrase();        
         
-        if (tunnelToDisableIndex > -1) {
-            this.names[tunnelToDisableIndex].hide();           
+        if (nameIndex > 1) {
+            this.names[nameIndex-1].removeTunnelFromScene();        
         }
+        
+        nameIndex = (nameIndex+1) % this.names.length;
     }
 }
     

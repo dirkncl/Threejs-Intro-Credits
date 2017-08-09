@@ -14,7 +14,7 @@ tunnelController.prototype.init = function(){
         time: {type:"f", value: 1.0 },
         seed: {type:"f", value: 1.0 },
         amp: {type:"f", value: 10.0 },
-        intensity: { type:"f", value : 1.0 }
+        intensity: { type:"f", value : 0.0 }
     };
     
 	this.material = new THREE.ShaderMaterial( {
@@ -54,7 +54,7 @@ tunnelController.prototype.seed = function(){
     this.mesh.material.uniforms.amp.value = x;
 }
 
-tunnelController.prototype.addToScene = function() {
+tunnelController.prototype.addToScene = function() {    
     base.scene.add(this.mesh);
 }
 
