@@ -200,8 +200,10 @@ textController.prototype.registerAnimations = function() {
 
         for (var i = 0; i < self.currentDisplayedMeshes.length; i++)
         {
+			var p = i*.7+base.time.time*3;
             var mesh = self.currentDisplayedMeshes[i];
-            mesh.position.y = 1.0 + Math.sin(i + self.base.time.time)*2;
+            mesh.position.y = 1.0 + Math.sin(p)*2;
+			mesh.position.z = -200+Math.cos(p)*5;
             this.uniforms.time.value = base.time.time;
         }
         
