@@ -42,29 +42,36 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src = "fitc/textController.js"></script>
 		<script src = "fitc/nameController.js"></script>
 		<script src = "fitc/voxGenerator.js"></script>
+		<script src = "fitc/shaderGenAlpha.js"></script>
         
 		<script>
 			var base = new ccBase();
 			new ccThreeBase(base);
 			var scheduler = new ccScheduler(base);
             scheduler.setBPM(160);
+			base.shaderGen = new shaderGenAlpha(base);
 			new ccMath();
 			var audio = new ccAudio(base);
             new ccDebuger(base);
-			new ccMotionBlur(base,.8);			
-			var vox = new voxGenerator(base, ["lol", "sound", "test"]);
+			new ccMotionBlur(base,.8);		
+			var a = ["weed", "please", "welcome to hell"];
+			var vox = new voxGenerator(base, a);
             
 			base.addUpdateCallback(()=>{
 				if(base.key.justPressed[32])
-					meSpeak.play(vox.sound["sound"]);
+					meSpeak.play(vox.sound[a[0]]);
+				if(base.key.justPressed[65])
+					meSpeak.play(vox.sound[a[1]]);
+				if(base.key.justPressed[83])
+					meSpeak.play(vox.sound[a[2]]);
 			});
 			
             var nameController = new nameController(base);
             nameController.loadNames(base.loadingManager);
             scheduler.init();
-			
             base.loadingManager.onProgress = function (  url, itemsLoaded, itemsTotal ) {
-                if (itemsLoaded == 6) {
+				console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
+                if (itemsLoaded == 7) {
                     nameController.loadLetters();
 					scheduler.reset();
                     nameController.warmupTunnels();

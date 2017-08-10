@@ -182,8 +182,7 @@ textController.prototype.registerAnimations = function() {
     var self = this;
 	var delayPerLetter = .0666;
 	var easeOutTime = 1;
-	var startEaseOut = base.scheduler.totalPhrase-easeOutTime-delayPerLetter*this.currentDisplayedMeshes.length;
-	
+	var startEaseOut = base.scheduler.totalPhrase-easeOutTime-delayPerLetter*this.currentDisplayedMeshes.length;	
    
 	for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
 	{
