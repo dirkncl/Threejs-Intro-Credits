@@ -3,11 +3,12 @@ function shaderGenAlpha(base){
 	var self = this;
  	base.loadAndSet("shaders/tunnel.vert",  self,"vert");
 	base.loadingManager.itemStart("alphaFrag");
+    
 	base.load("fitc/alphaHeader.frag",(x)=>{
 		x = x.split("...");
-		console.log(x[0]);
 		self.fragHeader = x[0];
 		self.fragFooter = x[1];
+        console.log("ok loaded");
 		base.loadingManager.itemEnd("alphaFrag");
 	});
 	
@@ -38,28 +39,33 @@ function shaderGenAlpha(base){
 	this.parts['x'] = "c.rgb = mod(c.rgb*vec3(1., 10., 5.),1.);\n";
   	this.parts['y'] = "c.rgb = mod(c.rgb+t*.2+vec3(.66,.33,.0), vec3(1.));\n";
 	this.parts['z'] = "c.rgb = c.brg*.333;\n";
-
 }
 
 shaderGenAlpha.prototype.getShader = function(s){
     var main = "";
 	
-	for(var i = 0; i< s.length; i++){
+	for(var i = 0; i < s.length; i++){
 		var c = s.charAt(i);
-		if(this.parts[c]!=null)
-			main+= this.parts[c];
+		if (this.parts[c] != undefined) 
+        {
+            main+= this.parts[c];   
+        }
 	}
-	
+    
     var shader = new THREE.ShaderMaterial(
 		{
 		uniforms: {
 			t:  {type:"f",value: 0.},
 			amp: {type:"f", value:3},
 			seed:{type:"f", value:Math.random()*1000  },
-			intensity:{type:"f", value:0 }
+			intensity:{type:"f", value:1.0 }
 		},
 		vertexShader: this.vert,
-		fragmentShader: this.fragHeader+main+this.fragFooter
+		fragmentShader: this.fragHeader+main+this.fragFooter,
+        side:THREE.BackSide,
+        transparent:true,
+        blending: THREE.AdditiveBlending
+            
 	});
 	base.addUpdateCallback(()=>{
 		shader.uniforms.t.value = base.time.time;

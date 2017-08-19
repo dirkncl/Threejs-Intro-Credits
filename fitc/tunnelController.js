@@ -17,31 +17,12 @@ tunnelController.prototype.init = function(){
         intensity: { type:"f", value : 0.0 }
     };
     
-	this.material = new THREE.ShaderMaterial( {
-        uniforms : this.uniforms,
-        side:THREE.BackSide,
-        transparent:true,
-        blending: THREE.NormalBlending,
-        depthTest: false,
-        wireframe: Math.random()*2 < 1 ? true : false
-	} );
-    
-    this.base.load("shaders/tunnel.frag", (x)=>{
-        self.material.fragmentShader = x;
-    } );
-	
-    this.base.load("shaders/tunnel.vert", (x)=>{
-        self.material.vertexShader = x;
-    } );
+	this.material = base.shaderGen.getShader(this.name);
     
 	this.mesh = new THREE.Mesh(geometry, this.material);
     this.mesh.position.z = -30;
     this.mesh.rotation.y = Math.PI;
-    
-	base.addUpdateCallback(()=>{
-        this.mesh.material.uniforms.time.value = base.time.time*(this.mesh.material.uniforms.seed.value%1+.5);
-    });
-    
+    this.mesh.renderOrder = 0;
 	var self = this;
 	this.seed();
 	this.base.addMouseDownCallback(()=>{self.seed();});
@@ -54,7 +35,8 @@ tunnelController.prototype.seed = function(){
     this.mesh.material.uniforms.amp.value = x;
 }
 
-tunnelController.prototype.addToScene = function() {    
+tunnelController.prototype.addToScene = function() {
+    this.material.uniforms.intensity.value = 0.0;
     base.scene.add(this.mesh);
 }
 
@@ -67,16 +49,17 @@ tunnelController.prototype.HideThisPhrase = function() {
     var self = this;
     
     base.scheduler.callNextPhraseRange((progress)=>{
-        self.uniforms.intensity.value = 1.0-progress;
+        self.material.uniforms.intensity.value = 1.0-progress;
     }, 0.85, 1.0);
 }
 
-tunnelController.prototype.ShowThisPhrase = function() {
+tunnelController.prototype.ShowThisPhrase = function(destIntensity) {
     
     var self = this;
-    
+    var startIntensity = this.material.uniforms.intensity.value;
+    console.log(this.name + " " + startIntensity + " " + destIntensity);
     base.scheduler.callNextPhraseRange((progress)=>{
-        self.uniforms.intensity.value = progress;
+        self.material.uniforms.intensity.value = Math.lerp(startIntensity, destIntensity, progress);
     }, 0.0, 0.15);
 }
 

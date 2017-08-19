@@ -22,32 +22,26 @@ nameController.prototype.loadNames = function(){
 }
 
 nameController.prototype.showNextName = function() {
-    if (this.names.length > 0) {
-        var tunnelToEnableIndex = nameIndex + this.numOverlappingTunnels;
-        
-        if (tunnelToEnableIndex < this.names.length) {
-            this.names[tunnelToEnableIndex].show();        
-        }
 
-        this.textController.setText(this.names[nameIndex].name);
-        this.textController.setScale(0.01);
-        
-        this.names[nameIndex].fadeOutTunnelThisPhrase();        
-        
-        if (nameIndex > 1) {
-            this.names[nameIndex-1].removeTunnelFromScene();        
-        }
-        
-        nameIndex = (nameIndex+1) % this.names.length;
+    var tunnelToEnableIndex = 0;
+
+    while (tunnelToEnableIndex <= this.numOverlappingTunnels) 
+    {
+        var intensity = 1.0 - (tunnelToEnableIndex) / (this.numOverlappingTunnels);
+        this.names[nameIndex + tunnelToEnableIndex].show(intensity);
+        tunnelToEnableIndex++;
     }
-}
-    
-nameController.prototype.warmupTunnels = function() {
-    if (this.names.length > 0) {
-        for (var i = 0; i < this.numOverlappingTunnels; i++) {
-            this.names[i].show();
-        }
+
+    this.textController.setText(this.names[nameIndex].name);
+    this.textController.setScale(0.01);
+
+    this.names[nameIndex].fadeOutTunnelThisPhrase();        
+
+    if (nameIndex > 0) {
+        this.names[nameIndex-1].removeTunnelFromScene();        
     }
+
+    nameIndex = (nameIndex+1) % this.names.length;
 }
 
 nameController.prototype.parseNames = function(data) {

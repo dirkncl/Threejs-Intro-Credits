@@ -11,12 +11,12 @@ function textController(base){
     
     var frontMaterial = new THREE.ShaderMaterial( {          
         uniforms : this.uniforms,
-        transparent:true,
+        transparent:false
     } );
     
     var sideMaterial = new THREE.ShaderMaterial( {          
-            uniforms : this.uniforms,
-            transparent:true,
+        uniforms : this.uniforms,
+        transparent:false
     } );
     
     this.base.loadAndSet("shaders/fontfront.frag", frontMaterial,"fragmentShader");	
@@ -103,7 +103,7 @@ textController.prototype.generateTextMesh = function(text) {
 
     textGeo.computeBoundingBox();
     var textMesh = new THREE.Mesh( textGeo, this.material );
-
+    textMesh.renderOrder = 100;
     return textMesh;
 }
 
@@ -129,14 +129,19 @@ textController.prototype.setText = function(text) {
         }
         
         var letterMeshGeometry = this.letterMeshes[key][letterIndexes[key]].geometry;
-        spacings[i] = letterMeshGeometry.boundingBox.getSize().x + spacing;
+        spacings[i] = letterMeshGeometry.boundingBox.getSize().x;
+        
+        if (i < text.length-1) {
+            spacings[i] += spacing;
+        }
+        
         totalWidth += spacings[i];
     }
     
     letterIndexes = {};
     
     // This assumes one space in the name
-    xPos -= totalWidth / 2.0 - spaceWidth*0.5;
+    xPos -= totalWidth / 2.0;
     
     var meshIndex = 0;
     
@@ -159,7 +164,7 @@ textController.prototype.setText = function(text) {
         }
         
         var letterMesh = this.letterMeshes[key][letterIndexes[key]];
-        letterMesh.position.z = -300;
+        letterMesh.position.z = -200;
         letterMesh.position.x = xPos;
         base.scene.add(letterMesh);
         xPos += spacings[i];
@@ -201,7 +206,7 @@ textController.prototype.registerAnimations = function() {
         {
 			var p = i*.7+base.time.time*3;
             var mesh = self.currentDisplayedMeshes[i];
-            mesh.position.y = 1.0 + Math.sin(p)*2;
+            mesh.position.y = Math.sin(p)*2;
 			mesh.position.z = -200+Math.cos(p)*5;
             this.uniforms.time.value = base.time.time;
         }
