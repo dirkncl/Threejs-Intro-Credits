@@ -32,6 +32,15 @@ function textController(base){
     this.letterMeshes = { };
     this.font = null;
     this.currentDisplayedMeshes = [ ];
+    this.letterSfx = [ ];
+	var self = this;
+	
+	for(var i = 0; i< 26; i++){
+		var j = i;
+		base.audio.loadSound("sound/letterFX/letterFX-"+j+".mp3", function(b){
+			self.letterSfx.push(b);
+		});
+	}
 }
 
 textController.prototype.loadFont = function() {
@@ -186,15 +195,21 @@ textController.prototype.removeDisplayedMeshes = function() {
 
 textController.prototype.registerAnimations = function() {
     var self = this;
-	var delayPerLetter = .0666;
+	var delayPerLetter = base.scheduler.totalBeat/2;
 	var easeOutTime = 1;
 	var startEaseOut = base.scheduler.totalPhrase-easeOutTime-delayPerLetter*this.currentDisplayedMeshes.length;	
    
 	for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
 	{
 		var mesh = this.currentDisplayedMeshes[i];
-		TweenMax.to(mesh.scale, 2, {x:1, y:1, z:1, delay:i*.0666, ease: Elastic.easeOut});
-		TweenMax.to(mesh.scale, easeOutTime, {x:.01, y:.01, z:.01, delay:startEaseOut+i*.0666, ease: Back.easeIn});
+		TweenMax.to(mesh.scale, 2, {x:1, y:1, z:1, delay:i*delayPerLetter, ease: Elastic.easeOut});
+		TweenMax.to(mesh.scale, easeOutTime, {x:.01, y:.01, z:.01, delay:startEaseOut+i*delayPerLetter, ease: Back.easeIn});
+		var j = i;
+		base.scheduler.callInSeconds(()=>{
+			console.log(self.letterSfx[j]);
+			if(self.letterSfx[j]!=null)
+				base.audio.play(self.letterSfx[j]);
+		},j*delayPerLetter);
     }  
     
     base.scheduler.callNextPhraseRange((progress)=>{
