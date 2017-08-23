@@ -6,7 +6,7 @@ function tunnelController(base, name, index){
 
 tunnelController.prototype.init = function(){
 
-	var geometry = ccMesh.cone(52,52.0,1.0,100.);
+	var geometry = ccMesh.cone(52,52.0,52.0,100.);
 	geometry = ccMesh.scaleUV(geometry, 6.28, 0);
     var self = this;
     
@@ -20,9 +20,8 @@ tunnelController.prototype.init = function(){
 	this.material = base.shaderGen.getShader(this.name);
     
 	this.mesh = new THREE.Mesh(geometry, this.material);
-    this.mesh.position.z = -30;
+    this.mesh.position.z = -25;
     this.mesh.rotation.y = Math.PI;
-    this.mesh.renderOrder = 0;
 	var self = this;
 	this.seed();
 	this.base.addMouseDownCallback(()=>{self.seed();});
@@ -50,16 +49,24 @@ tunnelController.prototype.HideThisPhrase = function() {
     
     base.scheduler.callNextPhraseRange((progress)=>{
         self.material.uniforms.intensity.value = 1.0-progress;
-    }, 0.85, 1.0);
+    }, 0.5, 1.0);
 }
 
 tunnelController.prototype.ShowThisPhrase = function(destIntensity) {
     
     var self = this;
     var startIntensity = this.material.uniforms.intensity.value;
+    var startScale = this.mesh.scale.x;
     console.log(this.name + " " + startIntensity + " " + destIntensity);
-    base.scheduler.callNextPhraseRange((progress)=>{
-        self.material.uniforms.intensity.value = Math.lerp(startIntensity, destIntensity, progress);
-    }, 0.0, 0.15);
+
+    if (destIntensity == 0.5) {
+        base.scheduler.callNextPhraseRange((progress)=>{    
+            self.material.uniforms.intensity.value = Math.lerp(startIntensity, destIntensity, progress);
+        }, 0.5, 1.0);
+    } else {
+        base.scheduler.callNextPhraseRange((progress)=>{    
+            self.material.uniforms.intensity.value = Math.lerp(startIntensity, destIntensity, progress);
+        }, 0.0, 0.5);    
+    }
 }
 

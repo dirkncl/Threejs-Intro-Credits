@@ -5,7 +5,7 @@ function nameController(base){
     this.textController = new textController(base);
     this.textController.loadFont();
     this.names = [];
-    this.numOverlappingTunnels = 1;
+    this.numOverlappingTunnels = 2;
 }
 
 nameController.prototype.loadNames = function(){

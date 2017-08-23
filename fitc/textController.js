@@ -21,6 +21,7 @@ function textController(base){
     
     this.base.loadAndSet("shaders/fontfront.frag", frontMaterial,"fragmentShader");	
     this.base.loadAndSet("shaders/fontside.frag",  sideMaterial,"fragmentShader");
+    this.base.loadAndSet("shaders/fontside.frag",  sideMaterial,"fragmentShader");
     
     this.base.load("shaders/font.vert", (x)=>{
         frontMaterial.vertexShader = x;
@@ -38,7 +39,7 @@ textController.prototype.loadFont = function() {
     var loader = new THREE.FontLoader(base.loadingManager);
     var self = this;
     
-    loader.load( "fonts/helvetiker_regular.typeface.js", function ( response ) {
+    loader.load( "fonts/droid/droid_sans_regular.typeface.js", function ( response ) {
         self.font = response;
     } , function ( ok ) {
 
@@ -98,13 +99,12 @@ textController.prototype.generateTextMesh = function(text) {
         bevelEnabled: true,
 
         material: 0,
-        extrudeMaterial: 1
+        extrudeMaterial: 1,
+        
     });
 
     textGeo.computeBoundingBox();
     var textMesh = new THREE.Mesh( textGeo, this.material );
-    textMesh.renderOrder = 5;
-    
     return textMesh;
 }
 
@@ -194,12 +194,8 @@ textController.prototype.registerAnimations = function() {
 	{
 		var mesh = this.currentDisplayedMeshes[i];
 		TweenMax.to(mesh.scale, 2, {x:1, y:1, z:1, delay:i*.0666, ease: Elastic.easeOut});
-	}  
-	for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
-	{
-		var mesh = this.currentDisplayedMeshes[i];
 		TweenMax.to(mesh.scale, easeOutTime, {x:.01, y:.01, z:.01, delay:startEaseOut+i*.0666, ease: Back.easeIn});
-	}        
+    }  
     
     base.scheduler.callNextPhraseRange((progress)=>{
 

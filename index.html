@@ -23,7 +23,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src = "camp/ccMath.js"></script>
         <script src = "camp/fx/ccMotionBlur.js"></script>	
 		
-        <script src="js/three.min.js"></script>
+        <script src="http://threejs.org/build/three.min.js"></script>
         <script src="js/jquery-2.2.0.min.js"></script>		
 		<script src="js/libs/stats.min.js"></script>
         <script src="js/utils/GeometryUtils.js"></script>	
@@ -35,49 +35,62 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src="js/postprocessing/SavePass.js"></script>
 		<script src="js/postprocessing/TexturePass.js"></script>
 		
-		<script src="mespeak/mespeak.js"></script>
-
 		<script src = "fitc/FitcName.js"></script>
         <script src = "fitc/tunnelController.js"></script>
 		<script src = "fitc/textController.js"></script>
 		<script src = "fitc/nameController.js"></script>
 		<script src = "fitc/voxGenerator.js"></script>
 		<script src = "fitc/shaderGenAlpha.js"></script>
+        <script src="mespeak/mespeak.js"></script>
         
 		<script>
 			var base = new ccBase();
 			new ccThreeBase(base);
 			var scheduler = new ccScheduler(base);
-            scheduler.setBPM(160);
+            scheduler.setBPM(266);
 			base.shaderGen = new shaderGenAlpha(base);
 			new ccMath();
 			var audio = new ccAudio(base);
             new ccDebuger(base);
 			new ccMotionBlur(base,.8);		
-			var a = ["weed", "please", "welcome to hell"];
-			var vox = new voxGenerator(base, a);
-            
-			base.addUpdateCallback(()=>{
-				if(base.key.justPressed[32])
-					meSpeak.play(vox.sound[a[0]]);
-				if(base.key.justPressed[65])
-					meSpeak.play(vox.sound[a[1]]);
-				if(base.key.justPressed[83])
-					meSpeak.play(vox.sound[a[2]]);
-			});
-			
+            var a = ["weed", "please", "welcome to hell"];
+            var vox = new voxGenerator(base, a);
+
+            base.addUpdateCallback(()=>{
+                   if(base.key.justPressed[32])
+                           meSpeak.play(vox.sound[a[0]]);
+                   if(base.key.justPressed[65])
+                           meSpeak.play(vox.sound[a[1]]);
+                   if(base.key.justPressed[83])
+                           meSpeak.play(vox.sound[a[2]]);
+            });
+                   
+
             var nameController = new nameController(base);
             nameController.loadNames(base.loadingManager);
             scheduler.init();
             base.loadingManager.onProgress = function (  url, itemsLoaded, itemsTotal ) {
-				console.log( 'Loading file: ' + url + '.\nLoaded ' + itemsLoaded + ' of ' + itemsTotal + ' files.' );
-                if (itemsLoaded == 7) {
+                if (itemsLoaded == 3) {
                     nameController.loadLetters();
-					scheduler.reset();
-                    nameController.warmupTunnels();
-                    scheduleBeats();
+                    
+                    base.addUpdateCallback(warmup);
+                    //scheduler.callNextPhrase(scheduleBeats);
                 }
 			};
+            
+            var frameCount = 0;
+            
+            function warmup() {
+                
+                if (frameCount == 2) {
+                    base.removeUpdateCallback(warmup);
+                    scheduler.reset();
+                    scheduler.started = true;
+                    scheduleBeats();                
+                }
+                
+                frameCount++;
+            }
             
             function scheduleBeats() {
                 nameController.showNextName();
