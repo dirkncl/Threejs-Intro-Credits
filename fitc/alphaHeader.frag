@@ -14,6 +14,7 @@ vec4 smin(vec4 a, vec4 b, float k){
 
 void main(){
 	vec2 uv = vUv;
+    uv.x += t;
 	vec4 c = uv.xxxx;
 	 vec4 b = c;			
 	 c.a = 0.;
