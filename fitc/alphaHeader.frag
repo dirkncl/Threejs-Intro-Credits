@@ -12,6 +12,11 @@ vec4 smin(vec4 a, vec4 b, float k){
 	return mix( b, a, h ) - k*h*(1.0-h);
 }
 
+vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d )
+{
+    return a + b*cos( 6.28318*(c*t+d) );
+}
+
 void main(){
 	vec2 uv = vUv;
     uv.x += t;
@@ -21,7 +26,15 @@ void main(){
 ...
 	 //b.rgb=mix(b.rgb,c.rgb,smoothstep(0.01,.0,c.a));
 	 c.a = min(c.r, c.b);
-	 c*= 1.-pow(1.-smoothstep(6., 1.,vUv.x), 2.);
+	 c*= 1.-vUv.x*0.2;
 	 c.a*= intensity;
-	 gl_FragColor = c;
+     
+     const vec3 aa = vec3(0.5,0.5,0.5);
+     const vec3 bb = vec3(0.5,0.5,0.5); 
+     const vec3 cc = vec3(2.0,1.0,1.0); 
+     const vec3 dd = vec3(0.15,0.20,0.25);
+     
+     c.rgb = pal(length(c.rgb), aa, bb, cc, dd );
+     c.rgb = pow(c.rgb, vec3(3.5));
+     gl_FragColor = c;
 }
