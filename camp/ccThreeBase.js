@@ -44,7 +44,9 @@ ccThreeBase = function(base){
 					base.postEffects[base.postEffects.length-1].renderToScreen = true;
 			}
 		}	
-          
+    
+        base.blur = new ccMotionBlur(base,.81);		
+        
         base.loadingManager = new THREE.LoadingManager();
             
         base.loadingManager.onStart = function ( url, itemsLoaded, itemsTotal ) {
@@ -58,6 +60,17 @@ ccThreeBase = function(base){
         base.loadingManager.onError = function ( url ) {
             console.log( 'There was an error loading ' + url );
         };
+        
+        var loader = new THREE.FontLoader(base.loadingManager);
+        var self = this;
+
+        loader.load( "fonts/droid/droid_sans_regular.typeface.js", function ( response ) {
+            base.font = response;
+        } , function ( ok ) {
+
+        } , function(error){
+            console.log(error)
+        });  
 	}
 	
 	this.onResize = function(){
