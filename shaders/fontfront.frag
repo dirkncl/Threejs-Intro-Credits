@@ -6,6 +6,6 @@ void main()	{
 
     vec2 p = vUv;
 
-    gl_FragColor=vec4(intensity);
+    gl_FragColor=vec4(0.85, 0.85, 0.85, intensity*0.5);
 
 }

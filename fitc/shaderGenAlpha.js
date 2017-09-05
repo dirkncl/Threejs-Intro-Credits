@@ -56,8 +56,8 @@ shaderGenAlpha.prototype.getShader = function(s){
 		{
 		uniforms: {
 			t:  {type:"f",value: 0.},
-			amp: {type:"f", value:3},
-			seed:{type:"f", value:Math.random()*1000  },
+			amp: {type:"f", value:2},
+			seed:{type:"f", value:10  },
 			intensity:{type:"f", value:1.0 }
 		},
 		vertexShader: this.vert,

@@ -3,9 +3,12 @@ var nameIndex = 0;
 function nameController(base){
 	this.base = base;
     this.textController = new textController(base);
-    this.textController.loadFont();
     this.names = [];
     this.numOverlappingTunnels = 2;
+}
+
+nameController.prototype.isDone = function() {
+    return nameIndex >= this.names.length;
 }
 
 nameController.prototype.loadNames = function(){
@@ -33,7 +36,7 @@ nameController.prototype.showNextName = function() {
     }
 
     this.textController.setText(this.names[nameIndex].name);
-    this.textController.setScale(0.01);
+    //this.textController.setScale(0.01);
 
     this.names[nameIndex].fadeOutTunnelThisPhrase();        
 
@@ -41,7 +44,7 @@ nameController.prototype.showNextName = function() {
         this.names[nameIndex-1].removeTunnelFromScene();        
     }
 
-    nameIndex = (nameIndex+1) % this.names.length;
+    nameIndex++;
 }
 
 nameController.prototype.parseNames = function(data) {

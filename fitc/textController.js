@@ -1,22 +1,21 @@
-var font;
-
-
 function textController(base){
 	this.base = base;
+    this.meshGroup = new THREE.Object3D();
     this.uniforms = {
-					time:       { type:"f", value: 0.0 },
-                    intensity : { type:"f", value: 1.0 }
+        time:       { type:"f", value: 0.0 },
+        intensity : { type:"f", value: 0.0 },
+        amp: {type:"f", value:2},
+        seed:{type:"f", value:10}
     };
 
     var frontMaterial = new THREE.ShaderMaterial( {          
         uniforms : this.uniforms,
-        transparent:false,
+        transparent:true,
     } );
     
     var sideMaterial = new THREE.ShaderMaterial( {          
         uniforms : this.uniforms,
-        transparent:false,
-        
+        transparent:true      
     } );
     
     this.base.loadAndSet("shaders/fontfront.frag", frontMaterial,"fragmentShader");	
@@ -30,7 +29,6 @@ function textController(base){
     
     this.material = new THREE.MultiMaterial( [frontMaterial, sideMaterial ] );
     this.letterMeshes = { };
-    this.font = null;
     this.currentDisplayedMeshes = [ ];
     this.letterSfx = [ ];
 	var self = this;
@@ -41,20 +39,6 @@ function textController(base){
 			self.letterSfx.push(b);
 		});
 	}
-}
-
-textController.prototype.loadFont = function() {
-
-    var loader = new THREE.FontLoader(base.loadingManager);
-    var self = this;
-    
-    loader.load( "fonts/droid/droid_sans_regular.typeface.js", function ( response ) {
-        self.font = response;
-    } , function ( ok ) {
-
-    } , function(error){
-        console.log(error)
-    });  
 }
 
 textController.prototype.loadLettersForNames = function(names) {
@@ -97,7 +81,7 @@ textController.prototype.loadLettersForNames = function(names) {
 
 textController.prototype.generateTextMesh = function(text) {
     var textGeo = new THREE.TextGeometry( text, {
-        font: this.font,
+        font: this.base.font,
 
         size: 2,
         height: 2,
@@ -120,12 +104,14 @@ textController.prototype.generateTextMesh = function(text) {
 textController.prototype.setText = function(text) {
     var totalWidth = 0.0;
     var spacing = 0.;
-    var spaceWidth = 2.0;
+    var spaceWidth = 1.0;
     var spacings = [];
     var xPos = 0.0;
     var letterIndexes = {};
     this.removeDisplayedMeshes();
-    
+    this.meshGroup = new THREE.Object3D();
+    this.meshGroup.position.z = -100;
+    this.uniforms.intensity.value = 0.0;
     for (var i = 0; i < text.length; i++) {
         var key = text[i];
         
@@ -174,22 +160,19 @@ textController.prototype.setText = function(text) {
         }
         
         var letterMesh = this.letterMeshes[key][letterIndexes[key]];
-        letterMesh.position.z = -200;
         letterMesh.position.x = xPos;
-        base.scene.add(letterMesh);
+        
+        this.meshGroup.add(letterMesh);
         xPos += spacings[i];
         this.currentDisplayedMeshes[meshIndex] = letterMesh;
         meshIndex++;
     }
-    
+    base.scene.add(this.meshGroup);
     this.registerAnimations();
 }
 
 textController.prototype.removeDisplayedMeshes = function() {
-    
-    for (var i = 0; i < this.currentDisplayedMeshes.length; i++) {
-        base.scene.remove(this.currentDisplayedMeshes[i]);
-    }
+    base.scene.remove(this.meshGroup);    
     this.currentDisplayedMeshes = [];
 }
 
@@ -197,32 +180,33 @@ textController.prototype.registerAnimations = function() {
     var self = this;
 	var delayPerLetter = base.scheduler.totalBeat/2;
 	var easeOutTime = 1;
-	var startEaseOut = base.scheduler.totalPhrase-easeOutTime-delayPerLetter*this.currentDisplayedMeshes.length;	
+	var startEaseOut = base.scheduler.totalPhrase-easeOutTime;	
    
+	TweenMax.to(this.meshGroup.position, base.scheduler.totalPhrase, {z:-20, delay:0.0, ease: Quad.Linear});
+	TweenMax.to(this.uniforms.intensity, 1.0, {value:1.0, delay:0.0, ease: Quad.easeOut});
+		
 	for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
 	{
 		var mesh = this.currentDisplayedMeshes[i];
-		TweenMax.to(mesh.scale, 2, {x:1, y:1, z:1, delay:i*delayPerLetter, ease: Elastic.easeOut});
-		TweenMax.to(mesh.scale, easeOutTime, {x:.01, y:.01, z:.01, delay:startEaseOut+i*delayPerLetter, ease: Back.easeIn});
 		var j = i;
-		base.scheduler.callInSeconds(()=>{
-			console.log(self.letterSfx[j]);
-			if(self.letterSfx[j]!=null)
-				base.audio.play(self.letterSfx[j]);
-		},j*delayPerLetter);
+	//	base.scheduler.callInSeconds(()=>{
+			//if(self.letterSfx[j]!=null)
+				//base.audio.play(self.letterSfx[j], false, 0.15);
+	//	},j*delayPerLetter);
     }  
     
     base.scheduler.callNextPhraseRange((progress)=>{
-
         for (var i = 0; i < self.currentDisplayedMeshes.length; i++)
         {
 			var p = i*.7+base.time.time*3;
             var mesh = self.currentDisplayedMeshes[i];
             mesh.position.y = Math.sin(p)*0.25;
-			mesh.position.z = -25+Math.cos(p)*0.25;
             this.uniforms.time.value = base.time.time;
         }
         
+        self.base.blur.pass.uniforms.noiseAmplitude.value = progress * 0.025;
+        self.base.blur.pass.uniforms.strength.value = Math.min(0.97, Math.lerp(0.7, 1.1,progress));
+
     }, 0.0, 1.0);
 }
 
