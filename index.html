@@ -37,11 +37,11 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		
 		<script src = "fitc/FitcName.js"></script>
         <script src = "fitc/tunnelController.js"></script>
-		<script src = "fitc/textController.js"></script>
+        <script src = "fitc/IntroController.js"></script>
+        <script src = "fitc/textController.js"></script>
 		<script src = "fitc/nameController.js"></script>
 		<script src = "fitc/voxGenerator.js"></script>
 		<script src = "fitc/shaderGenAlpha.js"></script>
-        <script src="mespeak/mespeak.js"></script>
         
 		<script>
 			var base = new ccBase();
@@ -51,31 +51,23 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			base.shaderGen = new shaderGenAlpha(base);
 			new ccMath();
 			var audio = new ccAudio(base);
-			audio.loadAndPlay("sound/background.wav");
-            new ccDebuger(base);
-			new ccMotionBlur(base,.8);		
-            var a = ["weed", "please", "welcome to hell"];
-            var vox = new voxGenerator(base, a);
-
-            base.addUpdateCallback(()=>{
-                   if(base.key.justPressed[32])
-                           meSpeak.play(vox.sound[a[0]]);
-                   if(base.key.justPressed[65])
-                           meSpeak.play(vox.sound[a[1]]);
-                   if(base.key.justPressed[83])
-                           meSpeak.play(vox.sound[a[2]]);
+			var backgroundSoundBuffer = null;
+            
+            audio.loadSound("sound/background.wav", function(buffer) {
+                backgroundSoundBuffer = buffer;
             });
-                   
+            new ccDebuger(base);
 
             var nameController = new nameController(base);
-            nameController.loadNames(base.loadingManager);
+            var introController = new IntroController(base);
+            
             scheduler.init();
+            nameController.loadNames(base.loadingManager);
+
             base.loadingManager.onProgress = function (  url, itemsLoaded, itemsTotal ) {
                 if (itemsLoaded == 3) {
                     nameController.loadLetters();
-                    
-                    base.addUpdateCallback(warmup);
-                    //scheduler.callNextPhrase(scheduleBeats);
+                    introController.show(5.0, () => { warmup(); });
                 }
 			};
             
@@ -83,12 +75,14 @@ content="▲ FITC Toronto Intro 2017 ▲" />
             
             function warmup() {
                 
-                if (frameCount == 2) {
-                    base.removeUpdateCallback(warmup);
+               // if (frameCount >= 2 && backgroundSoundBuffer != null) {
+                 //   base.removeUpdateCallback(warmup);
                     scheduler.reset();
                     scheduler.started = true;
-                    scheduleBeats();                
-                }
+                    scheduleBeats();
+
+                    audio.play(backgroundSoundBuffer, true);
+            //    }
                 
                 frameCount++;
             }
