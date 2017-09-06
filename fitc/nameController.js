@@ -1,6 +1,6 @@
 var nameIndex = 0;
     
-function nameController(base){
+function nameController(base) {
 	this.base = base;
     this.textController = new textController(base);
     this.names = [];
@@ -11,7 +11,7 @@ nameController.prototype.isDone = function() {
     return nameIndex >= this.names.length;
 }
 
-nameController.prototype.loadNames = function(){
+nameController.prototype.loadNames = function() {
     var loader = new THREE.FileLoader(base.loadingManager);
     var self = this;
     
@@ -24,19 +24,32 @@ nameController.prototype.loadNames = function(){
     );
 }
 
+nameController.prototype.reset = function() {
+    nameIndex = 0;
+}
+
 nameController.prototype.showNextName = function() {
 
     var tunnelToEnableIndex = 0;
 
+    if (nameIndex >= this.names.length) {
+        this.names[nameIndex-1].removeTunnelFromScene();
+        return false;
+    }
+    
     while (tunnelToEnableIndex <= this.numOverlappingTunnels) 
     {
         var intensity = 1.0 - (tunnelToEnableIndex) / (this.numOverlappingTunnels);
-        this.names[nameIndex + tunnelToEnableIndex].show(intensity);
+        if (nameIndex + tunnelToEnableIndex < this.names.length) {
+            this.names[nameIndex + tunnelToEnableIndex].show(intensity);
+        }
         tunnelToEnableIndex++;
     }
 
-    this.textController.setText(this.names[nameIndex].name);
+    var t = this.textController.setText(this.names[nameIndex].name);
     //this.textController.setScale(0.01);
+
+    this.names[nameIndex].addTextToTunnel(t);        
 
     this.names[nameIndex].fadeOutTunnelThisPhrase();        
 
@@ -45,6 +58,7 @@ nameController.prototype.showNextName = function() {
     }
 
     nameIndex++;
+    return true;
 }
 
 nameController.prototype.parseNames = function(data) {
