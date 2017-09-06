@@ -3,7 +3,7 @@ uniform float t;
 uniform vec4 x;
 uniform vec4 y;
 uniform float intensity;
-varying vec3 worldPosition;
+varying float fogValue;
     
 vec2 mirror(vec2 p){
 	return abs(mod(p+1.,2.)-1.);
@@ -35,7 +35,7 @@ void main(){
      const vec3 cc = vec3(2.0,1.0,1.0); 
      const vec3 dd = vec3(0.15,0.20,0.25);
      
-     c.a *= clamp(1.0-abs(worldPosition.z)/300.0,0.,1.);
+     c.a *= fogValue;
      
      c.rgb = pal(length(c.rgb), aa, bb, cc, dd );
      c.rgb = pow(c.rgb, vec3(3.5));
