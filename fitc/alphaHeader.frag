@@ -3,7 +3,8 @@ uniform float t;
 uniform vec4 x;
 uniform vec4 y;
 uniform float intensity;
-	
+varying vec3 worldPosition;
+    
 vec2 mirror(vec2 p){
 	return abs(mod(p+1.,2.)-1.);
 }
@@ -19,20 +20,22 @@ vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d )
 
 void main(){
 	vec2 uv = vUv;
-    uv.x += t;
-	vec4 c = uv.xxxx;
-	 vec4 b = c;			
-	 c.a = 0.;
+    uv.y *= 6.28;
+    uv.x /= 0.5;
+    vec4 c = uv.xxxx;
+    vec4 b = c;
 ...
 	 //b.rgb=mix(b.rgb,c.rgb,smoothstep(0.01,.0,c.a));
-	 c.a = min(c.r, c.b);
-	 c*= 1.-vUv.x*0.2;
+	 c.a = min(min(c.r, c.b), c.g);
+	 //c.a *= (vUv.x);
 	 c.a*= intensity;
      
      const vec3 aa = vec3(0.5,0.5,0.5);
      const vec3 bb = vec3(0.5,0.5,0.5); 
      const vec3 cc = vec3(2.0,1.0,1.0); 
      const vec3 dd = vec3(0.15,0.20,0.25);
+     
+     c.a *= clamp(1.0-abs(worldPosition.z)/300.0,0.,1.);
      
      c.rgb = pal(length(c.rgb), aa, bb, cc, dd );
      c.rgb = pow(c.rgb, vec3(3.5));

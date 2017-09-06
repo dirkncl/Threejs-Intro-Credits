@@ -20,6 +20,10 @@ FitcName.prototype.fadeOutTunnelThisPhrase = function() {
     this.tunnel.HideThisPhrase();
 }
 
+FitcName.prototype.addTextToTunnel = function(textgroup) {
+    this.tunnel.AddText(textgroup);
+}
+
 FitcName.prototype.removeTunnelFromScene = function() {
     console.log("remove " + this.name + " tunnel");
     this.tunnel.removeFromScene();

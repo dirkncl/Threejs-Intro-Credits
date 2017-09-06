@@ -3,7 +3,7 @@ function textController(base){
     this.meshGroup = new THREE.Object3D();
     this.uniforms = {
         time:       { type:"f", value: 0.0 },
-        intensity : { type:"f", value: 0.0 },
+        intensity : { type:"f", value: 1.0 },
         amp: {type:"f", value:2},
         seed:{type:"f", value:10}
     };
@@ -110,8 +110,8 @@ textController.prototype.setText = function(text) {
     var letterIndexes = {};
     this.removeDisplayedMeshes();
     this.meshGroup = new THREE.Object3D();
-    this.meshGroup.position.z = -100;
-    this.uniforms.intensity.value = 0.0;
+
+    this.uniforms.intensity.value = 1.0;
     for (var i = 0; i < text.length; i++) {
         var key = text[i];
         
@@ -167,8 +167,14 @@ textController.prototype.setText = function(text) {
         this.currentDisplayedMeshes[meshIndex] = letterMesh;
         meshIndex++;
     }
-    base.scene.add(this.meshGroup);
+    this.meshGroup.position.z = -20;
+    this.meshGroup.scale.x = 3;
+    this.meshGroup.scale.z = 3;
+    this.meshGroup.scale.y = 3;
+    
+    //base.scene.add(this.meshGroup);
     this.registerAnimations();
+    return this.meshGroup;
 }
 
 textController.prototype.removeDisplayedMeshes = function() {
@@ -182,32 +188,36 @@ textController.prototype.registerAnimations = function() {
 	var easeOutTime = 1;
 	var startEaseOut = base.scheduler.totalPhrase-easeOutTime;	
    
-	TweenMax.to(this.meshGroup.position, base.scheduler.totalPhrase, {z:-20, delay:0.0, ease: Quad.Linear});
-	TweenMax.to(this.uniforms.intensity, 1.0, {value:1.0, delay:0.0, ease: Quad.easeOut});
-		
-	for (var i = 0; i < this.currentDisplayedMeshes.length; i++)
-	{
-		var mesh = this.currentDisplayedMeshes[i];
-		var j = i;
-	//	base.scheduler.callInSeconds(()=>{
-			//if(self.letterSfx[j]!=null)
-				//base.audio.play(self.letterSfx[j], false, 0.15);
-	//	},j*delayPerLetter);
-    }  
-    
+	//TweenMax.to(this.meshGroup.position, base.scheduler.totalPhrase, {z:-20, delay:0.0, ease: Quad.Linear});
+	//TweenMax.to(this.uniforms.intensity, 1.0, {value:1.0, delay:0.0, ease: Quad.easeOut});
+	
     base.scheduler.callNextPhraseRange((progress)=>{
         for (var i = 0; i < self.currentDisplayedMeshes.length; i++)
         {
 			var p = i*.7+base.time.time*3;
             var mesh = self.currentDisplayedMeshes[i];
-            mesh.position.y = Math.sin(p)*0.25;
+            mesh.position.y = -1 + Math.sin(p)*0.25;
+            this.uniforms.time.value = base.time.time;
+        }
+    }, 0.0, 1.0);
+           
+    base.scheduler.callNextPhraseRange((progress)=>{
+        for (var i = 0; i < self.currentDisplayedMeshes.length; i++)
+        {
+			var p = i*.7+base.time.time*3;
+            var mesh = self.currentDisplayedMeshes[i];
+            mesh.position.y = -1 + Math.sin(p)*0.25;
             this.uniforms.time.value = base.time.time;
         }
         
-        self.base.blur.pass.uniforms.noiseAmplitude.value = progress * 0.025;
-        self.base.blur.pass.uniforms.strength.value = Math.min(0.97, Math.lerp(0.7, 1.1,progress));
+        self.base.blur.pass.uniforms.noiseAmplitude.value = progress * 0.015;
+        self.base.blur.pass.uniforms.strength.value = Math.lerp(0.7, 1.0, progress);
 
-    }, 0.0, 1.0);
+    }, 0.5, 1.0);
+    
+    base.scheduler.callNextPhraseRange((progress)=>{
+        self.base.blur.pass.uniforms.strength.value = Math.lerp(1.0, 0.7,progress);
+    }, 0.0, 0.5);
 }
 
 textController.prototype.setScale = function(scale) {
