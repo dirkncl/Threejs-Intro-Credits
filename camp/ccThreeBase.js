@@ -24,7 +24,7 @@ ccThreeBase = function(base){
 		base.canvas = base.renderer.domElement;
 		document.body.appendChild( base.canvas );	
 		
-		base.post = new THREE.EffectComposer(base.renderer);
+        base.post = new THREE.EffectComposer(base.renderer);
 		var rend = new THREE.RenderPass(base.scene,base.camera);
 		base.post.addPass(rend);
 		base.postEffects = [];
@@ -60,17 +60,6 @@ ccThreeBase = function(base){
         base.loadingManager.onError = function ( url ) {
             console.log( 'There was an error loading ' + url );
         };
-        
-        var loader = new THREE.FontLoader(base.loadingManager);
-        var self = this;
-
-        loader.load( "fonts/droid/droid_sans_regular.typeface.js", function ( response ) {
-            base.font = response;
-        } , function ( ok ) {
-
-        } , function(error){
-            console.log(error)
-        });  
 	}
 	
 	this.onResize = function(){

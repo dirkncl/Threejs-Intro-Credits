@@ -22,6 +22,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src = "camp/ccMesh.js"></script>
 		<script src = "camp/ccMath.js"></script>
         <script src = "camp/fx/ccMotionBlur.js"></script>	
+		<script src = "camp/ccTextTools.js"></script>	
 
         <script src="http://threejs.org/build/three.min.js"></script>
         <script src="js/jquery-2.2.0.min.js"></script>		
@@ -49,12 +50,11 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			var base = new ccBase();
 			new ccThreeBase(base);
 			var scheduler = new ccScheduler(base);
-            scheduler.setBPM(350);
+            scheduler.setBPM(420);
 			base.shaderGen = new shaderGenAlpha(base);
 			new ccMath();
 			var audio = new ccAudio(base);
 			var backgroundSoundBuffer = null;
-            var outroController = new OutroController(base);
             
             audio.loadSound("sound/background.wav", function(buffer) {
                 backgroundSoundBuffer = buffer;
@@ -63,14 +63,33 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 
             var nameController = new nameController(base);
             var introController = new IntroController(base);
+            var outroController = null;
+            var strings = [
+                {
+                    key:"intro",
+                    string:"FITC presents"
+                },
+                { 
+                    key:"outroTitle",
+                    string:"Web Unleashed 2017"
+                },
+                { 
+                    key:"click",
+                    string:"Click to Replay"
+                }
+            ];
             
+            base.textTools = new ccTextTools(base);
+		
             scheduler.init();
             nameController.loadNames(base.loadingManager);
-
+            
             base.loadingManager.onProgress = function (  url, itemsLoaded, itemsTotal ) {
                 if (itemsLoaded == 3) {
-                    nameController.loadLetters();
-                    showIntro();
+                    base.textTools.loadTextMeshes(strings, () => {
+                       nameController.loadLetters();
+                       showIntro(); 
+                    });
                 }
 			};
             
@@ -86,6 +105,12 @@ content="▲ FITC Toronto Intro 2017 ▲" />
             }
             
             function showIntro() {
+                if (outroController == null) 
+                {
+                    outroController = new OutroController(base);
+                }
+                audio.stopAll();    
+
                 introController.show(5.0, () => { warmup(); });
             }
             

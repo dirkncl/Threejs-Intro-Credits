@@ -1,65 +1,39 @@
+var introController = null;
+
 function IntroController(base) {
 	this.base = base;
-    
-    this.uniforms = {
-					time:       { type:"f", value: 0.0 },
-                    intensity : { type:"f", value: 1.0 }
-    };
-
-    var frontMaterial = new THREE.ShaderMaterial( {          
-        uniforms : this.uniforms,
-        transparent:false,
-    } );
-    
-    var sideMaterial = new THREE.ShaderMaterial( {          
-        uniforms : this.uniforms,
-        transparent:false      
-    } );
-    
-    this.base.loadAndSet("shaders/fontfront.frag", frontMaterial,"fragmentShader");	
-    this.base.loadAndSet("shaders/fontside.frag",  sideMaterial,"fragmentShader");
-    this.base.loadAndSet("shaders/fontside.frag",  sideMaterial,"fragmentShader");
-    
-    this.base.load("shaders/font.vert", (x)=>{
-        frontMaterial.vertexShader = x;
-        sideMaterial.vertexShader = x;
-    } );
-    
-    this.material = new THREE.MultiMaterial( [frontMaterial, sideMaterial ] );
+    introController = this;
 }
 
 IntroController.prototype.show = function(duration, onComplete) {
+    this.time = 0.0;
+
+    this.mesh = this.base.textTools.textMeshes.intro;
+    console.log(this.base.textTools.textMeshes);
     
-    var mesh = this.generateTextMesh("FITC presents");
-    mesh.geometry.center();
-    mesh.position.z = -25;
-    this.base.scene.add(mesh);
+    this.mesh.geometry.center();
+    this.mesh.position.z = -25;
+    this.base.scene.add(this.mesh);
+    this.base.camera.position.z = 0.0;
+    this.base.addUpdateCallback(this.update);
+    this.duration = duration;
     
     this.base.scheduler.callInSeconds(() => {
-        this.base.scene.remove(mesh);
+        this.base.scene.remove(this.mesh);
+        this.base.removeUpdateCallback(this.update);
         onComplete();
     }, duration);
 }
 
-IntroController.prototype.generateTextMesh = function(text) {
+IntroController.prototype.update = function() {
+    
+    var progress = introController.time/introController.duration;
+    
+    introController.mesh.rotation.z = Math.cos(introController.time)*0.05;
+    introController.mesh.rotation.y = Math.cos(introController.time*1.25)*0.05;
 
-    var textGeo = new THREE.TextGeometry( text, {
-        font: this.base.font,
-
-        size: 2,
-        height: 2,
-        curveSegments: 4,
-
-        bevelThickness: .15,
-        bevelSize: .15,
-        bevelEnabled: true,
-
-        material: 0,
-        extrudeMaterial: 1,
-        
-    });
-
-    textGeo.computeBoundingBox();
-    var textMesh = new THREE.Mesh( textGeo, this.material );
-    return textMesh;
+    base.blur.pass.uniforms.strength.value = Math.lerp(0.5, 1.0, progress);
+    base.blur.pass.uniforms.noiseAmplitude.value = Math.lerp(0.0, 0.05, progress);
+    
+    introController.time += base.time.delta;
 }

@@ -30,15 +30,6 @@ function textController(base){
     this.material = new THREE.MultiMaterial( [frontMaterial, sideMaterial ] );
     this.letterMeshes = { };
     this.currentDisplayedMeshes = [ ];
-    this.letterSfx = [ ];
-	var self = this;
-	
-	for(var i = 0; i< 26; i++){
-		var j = i;
-		base.audio.loadSound("sound/letterFX/letterFX-"+j+".mp3", function(b){
-			self.letterSfx.push(b);
-		});
-	}
 }
 
 textController.prototype.loadLettersForNames = function(names) {
@@ -81,7 +72,7 @@ textController.prototype.loadLettersForNames = function(names) {
 
 textController.prototype.generateTextMesh = function(text) {
     var textGeo = new THREE.TextGeometry( text, {
-        font: this.base.font,
+        font: this.base.textTools.font,
 
         size: 2,
         height: 2,
