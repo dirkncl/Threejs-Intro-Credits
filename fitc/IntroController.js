@@ -13,6 +13,7 @@ IntroController.prototype.show = function(duration, onComplete) {
     
     this.mesh.geometry.center();
     this.mesh.position.z = -25;
+    this.mesh.scale.z = 0.1;
     this.base.scene.add(this.mesh);
     this.base.camera.position.z = 0.0;
     this.base.addUpdateCallback(this.update);

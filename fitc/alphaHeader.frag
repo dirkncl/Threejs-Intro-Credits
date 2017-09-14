@@ -20,24 +20,24 @@ vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d )
 
 void main(){
 	vec2 uv = vUv;
-    uv.y *= 6.28;
-    uv.x /= 0.5;
+
+    uv.x /= 0.25;
     vec4 c = uv.xxxx;
+    uv.y *= 6.28;
     vec4 b = c;
 ...
-	 //b.rgb=mix(b.rgb,c.rgb,smoothstep(0.01,.0,c.a));
-	 c.a = min(min(c.r, c.b), c.g);
-	 //c.a *= (vUv.x);
 	 c.a*= intensity;
      
-     const vec3 aa = vec3(0.5,0.5,0.5);
-     const vec3 bb = vec3(0.5,0.5,0.5); 
+     const vec3 aa = vec3(0.15,0.15,0.15);
+     const vec3 bb = vec3(0.15,0.15,0.15); 
      const vec3 cc = vec3(2.0,1.0,1.0); 
-     const vec3 dd = vec3(0.15,0.20,0.25);
-     
+     const vec3 dd = vec3(0.85,0.8,0.75);
+
      c.a *= fogValue;
      
-     c.rgb = pal(length(c.rgb), aa, bb, cc, dd );
-     c.rgb = pow(c.rgb, vec3(3.5));
+     c.rgb = sin(c.rgb)*0.15+0.15;
+     //c.rgb = pal((length(c.rgb))*0.5, aa, bb, cc, dd );
+     c.rgb = pow(c.rgb, vec3(1.666));
+     c.a *= intensity;
      gl_FragColor = c;
 }

@@ -6,30 +6,17 @@ function ccTextTools(base) {
     var self = this;
 
     this.uniforms = {
-        time:       { type:"f", value: 0.0 },
         intensity : { type:"f", value: 1.0 }
     };
 
-    var frontMaterial = new THREE.ShaderMaterial( {          
+    this.titleMaterial = new THREE.ShaderMaterial( {          
         uniforms : this.uniforms,
         transparent:false,
     } );
     
-    var sideMaterial = new THREE.ShaderMaterial( {          
-        uniforms : this.uniforms,
-        transparent:false      
-    } );
-    
-    this.base.loadAndSet("shaders/fontfront.frag", frontMaterial,"fragmentShader");	
-    this.base.loadAndSet("shaders/fontside.frag",  sideMaterial,"fragmentShader");
-    this.base.loadAndSet("shaders/fontside.frag",  sideMaterial,"fragmentShader");
-    
-    this.base.load("shaders/font.vert", (x)=>{
-        frontMaterial.vertexShader = x;
-        sideMaterial.vertexShader = x;
-    } );
-    
-    this.material = new THREE.MultiMaterial( [frontMaterial, sideMaterial ] );
+    this.base.loadAndSet("shaders/titlefontfront.frag", this.titleMaterial,"fragmentShader");	
+
+    this.base.loadAndSet("shaders/font.vert", this.titleMaterial, "vertexShader");
     
     loader.load( "fonts/droid/droid_sans_regular.typeface.js", function ( response ) {
         self.font = response;
@@ -49,7 +36,7 @@ ccTextTools.prototype.loadTextMeshes = function(strings, onComplete) {
     onComplete();
 }
 
-ccTextTools.prototype.generateTextMesh = function(text) {
+ccTextTools.prototype.generateTextMesh = function(text, mat) {
     
     var textGeo = new THREE.TextGeometry( text, {
         font: base.textTools.font,
@@ -58,16 +45,13 @@ ccTextTools.prototype.generateTextMesh = function(text) {
         height: 2,
         curveSegments: 4,
 
-        bevelThickness: .15,
-        bevelSize: .15,
-        bevelEnabled: true,
-
+       
         material: 0,
-        extrudeMaterial: 1,
+        extrudeMaterial: false,
         
     });
 
     textGeo.computeBoundingBox();
-    var textMesh = new THREE.Mesh( textGeo, this.material );
-    return textMesh;
+    
+    return new THREE.Mesh( textGeo, this.titleMaterial );    
 }

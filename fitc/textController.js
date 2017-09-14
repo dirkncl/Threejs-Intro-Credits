@@ -20,7 +20,6 @@ function textController(base){
     
     this.base.loadAndSet("shaders/fontfront.frag", frontMaterial,"fragmentShader");	
     this.base.loadAndSet("shaders/fontside.frag",  sideMaterial,"fragmentShader");
-    this.base.loadAndSet("shaders/fontside.frag",  sideMaterial,"fragmentShader");
     
     this.base.load("shaders/font.vert", (x)=>{
         frontMaterial.vertexShader = x;
@@ -67,7 +66,6 @@ textController.prototype.loadLettersForNames = function(names) {
             
         } 
     }
-    console.log("end loading letters");
 }
 
 textController.prototype.generateTextMesh = function(text) {
@@ -160,10 +158,9 @@ textController.prototype.setText = function(text) {
     }
     this.meshGroup.position.z = -20;
     this.meshGroup.scale.x = 3;
-    this.meshGroup.scale.z = 3;
+    this.meshGroup.scale.z = 15;
     this.meshGroup.scale.y = 3;
     
-    //base.scene.add(this.meshGroup);
     this.registerAnimations();
     return this.meshGroup;
 }
@@ -179,9 +176,6 @@ textController.prototype.registerAnimations = function() {
 	var easeOutTime = 1;
 	var startEaseOut = base.scheduler.totalPhrase-easeOutTime;	
    
-	//TweenMax.to(this.meshGroup.position, base.scheduler.totalPhrase, {z:-20, delay:0.0, ease: Quad.Linear});
-	//TweenMax.to(this.uniforms.intensity, 1.0, {value:1.0, delay:0.0, ease: Quad.easeOut});
-	
     base.scheduler.callNextPhraseRange((progress)=>{
         for (var i = 0; i < self.currentDisplayedMeshes.length; i++)
         {
@@ -201,14 +195,14 @@ textController.prototype.registerAnimations = function() {
             this.uniforms.time.value = base.time.time;
         }
         
-        self.base.blur.pass.uniforms.noiseAmplitude.value = progress * 0.015;
+        self.base.blur.pass.uniforms.noiseAmplitude.value = progress * 0.01;
         self.base.blur.pass.uniforms.strength.value = Math.lerp(0.7, 1.0, progress);
 
-    }, 0.5, 1.0);
+    }, 0.7, 1.0);
     
     base.scheduler.callNextPhraseRange((progress)=>{
         self.base.blur.pass.uniforms.strength.value = Math.lerp(1.0, 0.7,progress);
-    }, 0.0, 0.5);
+    }, 0.0, 0.3);
 }
 
 textController.prototype.setScale = function(scale) {

@@ -8,33 +8,16 @@ tunnelController.prototype.init = function(){
 
     this.torusRadius = 300;
     
-	//var geometry = ccMesh.cone(52,52.0,52.0,100.);
-    var geometry = new THREE.TorusBufferGeometry( this.torusRadius, 45, 150, 50);
-    
+    var geometry = new THREE.TorusBufferGeometry( this.torusRadius, 50, 100, 50);    
     //geometry = ccMesh.scaleUV(geometry, 6.28, 0);
-    var self = this;
     
-    this.uniforms = {
-        time: {type:"f", value: 1.0 },
-        seed: {type:"f", value: 1.0 },
-        amp: {type:"f", value: 10.0 },
-        intensity: { type:"f", value : 0.0 }
-    };
+    var self = this;
     
 	this.material = base.shaderGen.getShader(this.name);
     
 	this.mesh = new THREE.Mesh(geometry, this.material);
     this.mesh.rotation.x = Math.PI*0.5;
-    console.log(this.mesh);
     var self = this;
-	this.seed();
-}
-
-
-tunnelController.prototype.seed = function(){
-    var x = Math.random()*10.;
-    this.mesh.material.uniforms.seed.value = Math.random()*1000;
-    this.mesh.material.uniforms.amp.value = x;
 }
 
 tunnelController.prototype.addToScene = function() {
@@ -52,7 +35,7 @@ tunnelController.prototype.HideThisPhrase = function() {
     
     base.scheduler.callNextPhraseRange((progress)=>{
         self.material.uniforms.intensity.value = 1.0-progress;
-    }, 0.5, 1.0);
+    }, 0.7, 0.95);
 }
 
 tunnelController.prototype.AddText = function(text) {
@@ -74,14 +57,17 @@ tunnelController.prototype.AddText = function(text) {
     text.rotation.z = -this.obj.rotation.z; 
     
     this.base.camera.position.z = 70;
-    
-    this.obj2.add(this.obj);
-    base.scene.add(this.obj2);
-    
     var axis = this.obj.up;
     
+    this.obj2.add(this.obj);
+    this.obj.rotateOnAxis(axis, -0.5);
+    base.scene.add(this.obj2);
+    
+    
     base.scheduler.callNextPhraseRange((progress)=>{
-        this.obj.rotateOnAxis(axis, -0.61 * base.time.delta);
+        
+        this.obj.rotateOnAxis(axis, -1.025 * base.time.delta * (Math.max(0.1, 1.0-progress)));
+        
     }, 0.0, 1.0);
 }
 
@@ -100,7 +86,7 @@ tunnelController.prototype.ShowThisPhrase = function(destIntensity) {
     } else {
         base.scheduler.callNextPhraseRange((progress)=>{    
             self.material.uniforms.intensity.value = Math.lerp(startIntensity, destIntensity, progress);
-        }, 0.0, 0.5);    
+        }, 0.0, 0.25);
     }
 }
 

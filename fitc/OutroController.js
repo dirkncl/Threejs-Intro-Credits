@@ -40,6 +40,7 @@ OutroController.prototype.show = function(duration, onComplete) {
     
     this.mesh.geometry.center();
     this.mesh.position.z = -25;
+    this.mesh.scale.z = 0.1;
     this.base.scene.add(this.mesh);
     this.base.addUpdateCallback(this.update);
     this.base.blur.pass.uniforms.noiseAmplitude.value = 0.01;
@@ -55,7 +56,7 @@ OutroController.prototype.show = function(duration, onComplete) {
         this.replayTextMesh = this.base.textTools.textMeshes.click;
         this.replayTextMesh.scale.x = 0.5;
         this.replayTextMesh.scale.y = 0.5;
-        this.replayTextMesh.scale.z = 0.5;
+        this.replayTextMesh.scale.z = 0.1;
         
         this.replayTextMesh.geometry.center();
         this.replayTextMesh.position.z = -25;
