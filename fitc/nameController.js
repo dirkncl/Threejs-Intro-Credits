@@ -4,7 +4,7 @@ function nameController(base) {
 	this.base = base;
     this.textController = new textController(base);
     this.names = [];
-    this.numOverlappingTunnels = 2;
+    this.numOverlappingTunnels = 1;
 }
 
 nameController.prototype.isDone = function() {
@@ -34,10 +34,11 @@ nameController.prototype.showNextName = function() {
 
     if (nameIndex >= this.names.length) {
         this.names[nameIndex-1].removeTunnelFromScene();
+        this.base.blur.ClearLut();
         return false;
     }
     
-    while (tunnelToEnableIndex <= this.numOverlappingTunnels) 
+    while (tunnelToEnableIndex < this.numOverlappingTunnels) 
     {
         var intensity = 1.0 - (tunnelToEnableIndex) / (this.numOverlappingTunnels);
         if (nameIndex + tunnelToEnableIndex < this.names.length) {
@@ -47,7 +48,6 @@ nameController.prototype.showNextName = function() {
     }
 
     var t = this.textController.setText(this.names[nameIndex].name);
-    //this.textController.setScale(0.01);
 
     this.names[nameIndex].addTextToTunnel(t);        
 
@@ -55,8 +55,11 @@ nameController.prototype.showNextName = function() {
 
     if (nameIndex > 0) {
         this.names[nameIndex-1].removeTunnelFromScene();        
+        if (nameIndex % 2 == 0) {
+            this.base.blur.NextLut(1.0);
+        }
     }
-
+    
     nameIndex++;
     return true;
 }
@@ -71,6 +74,5 @@ nameController.prototype.parseNames = function(data) {
 }
 
 nameController.prototype.loadLetters = function() {
-    console.log("start loading letters");
     this.textController.loadLettersForNames(this.names);    
 }
