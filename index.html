@@ -22,7 +22,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src = "camp/ccMesh.js"></script>
 		<script src = "camp/ccMath.js"></script>
         <script src = "camp/fx/ccMotionBlur.js"></script>	
-		<script src = "camp/ccTextTools.js"></script>	
+        <script src = "camp/ccTextTools.js"></script>	
 
         <script src="http://threejs.org/build/three.min.js"></script>
         <script src="js/jquery-2.2.0.min.js"></script>		
@@ -35,7 +35,6 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 		<script src="js/postprocessing/MaskPass.js"></script>
 		<script src="js/postprocessing/SavePass.js"></script>
 		<script src="js/postprocessing/TexturePass.js"></script>
-				<script src="js/controls/OrbitControls.js"></script>
 
 		<script src = "fitc/FitcName.js"></script>
         <script src = "fitc/tunnelController.js"></script>
@@ -50,7 +49,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
 			var base = new ccBase();
 			new ccThreeBase(base);
 			var scheduler = new ccScheduler(base);
-            scheduler.setBPM(420);
+            scheduler.setBPM(500);
 			base.shaderGen = new shaderGenAlpha(base);
 			new ccMath();
 			var audio = new ccAudio(base);
@@ -60,7 +59,7 @@ content="▲ FITC Toronto Intro 2017 ▲" />
                 backgroundSoundBuffer = buffer;
             });
             new ccDebuger(base);
-
+            
             var nameController = new nameController(base);
             var introController = new IntroController(base);
             var outroController = null;
@@ -101,7 +100,9 @@ content="▲ FITC Toronto Intro 2017 ▲" />
                 scheduler.started = true;
                 scheduleBeats();
                 
-                audio.play(backgroundSoundBuffer, true);                    
+                base.blur.ApplyFirstLut(1.0);
+                
+                //audio.play(backgroundSoundBuffer, true);                    
             }
             
             function showIntro() {

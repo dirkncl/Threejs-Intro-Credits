@@ -5,12 +5,24 @@ uniform vec4 y;
 uniform float intensity;
 varying float fogValue;
     
-vec2 mirror(vec2 p){
-	return abs(mod(p+1.,2.)-1.);
+    float opS( float d1, float d2 )
+{
+    return max(-d1,d2);
 }
-vec4 smin(vec4 a, vec4 b, float k){
-	float h = clamp( 0.5+0.5*(b.w-a.w)/k, 0.0, 1.0 );
-	return mix( b, a, h ) - k*h*(1.0-h);
+
+float sdBox( vec2 p, vec2 b )
+{
+  vec2 d = abs(p) - b;
+  return min(max(d.x,d.y),0.0) + length(max(d,0.0));
+}
+
+float boxes(vec2 uv, float size, float repetitions) {
+    uv = mod (uv*repetitions, 1.) - 0.5;
+
+    float dist = sdBox(uv, vec2(size));
+    dist = opS(sdBox(uv, vec2(size*0.8)), dist);
+    
+    return step(dist,0.);
 }
 
 vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d )
@@ -24,20 +36,12 @@ void main(){
     uv.x /= 0.25;
     vec4 c = uv.xxxx;
     uv.y *= 6.28;
-    vec4 b = c;
 ...
-	 c.a*= intensity;
-     
-     const vec3 aa = vec3(0.15,0.15,0.15);
-     const vec3 bb = vec3(0.15,0.15,0.15); 
-     const vec3 cc = vec3(2.0,1.0,1.0); 
-     const vec3 dd = vec3(0.85,0.8,0.75);
-
      c.a *= fogValue;
-     
-     c.rgb = sin(c.rgb)*0.15+0.15;
-     //c.rgb = pal((length(c.rgb))*0.5, aa, bb, cc, dd );
-     c.rgb = pow(c.rgb, vec3(1.666));
      c.a *= intensity;
+     
+     c.b = 0.0;
+     c.rg = pow(c.rg, vec2(3.666));
+     
      gl_FragColor = c;
 }
