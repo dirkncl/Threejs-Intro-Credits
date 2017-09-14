@@ -1,5 +1,4 @@
 varying vec2 vUv;
-uniform float time;
 uniform float intensity;
 
 void main()	{
