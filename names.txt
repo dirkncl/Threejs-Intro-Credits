@@ -1,4 +1,6 @@
+Adelle Lin
 Aidan Nulman
+Albert Poon
 Alberto Medina
 Alexander Blom
 Anne Thomas
@@ -9,6 +11,7 @@ Burke Holland
 Carl Sziebert
 Chris Coyier
 Clarissa Peterson
+Connor Bell
 Damon Hernandez
 Fatima Remtullah
 Fred Beecher
@@ -29,6 +32,7 @@ Kevin Ball
 Kevin Vandecar
 Ksenija Gogic
 Kurt Krumme
+Lawton Spelliscy
 Liam Oscar Thurston
 Luke Dewitt
 Mariah Hay
@@ -44,6 +48,7 @@ Rob McDiarmid
 Robyn Larsen
 Ryan Christiani
 Sarah Drasner
+Shaima Al-Khalili
 Simon MacDonald
 Stacey Mulcahy
 Steve Truong
@@ -52,7 +57,3 @@ Tracy Osborn
 Una Kravets
 Victor Savkin
 Vitaly Friedman
-Adelle Lin
-Albert Poon
-Eric Jimenez
-Connor Bell
