@@ -60,9 +60,6 @@ content="▲ FITC WebU 2017 ▲" />
 			var audio = new ccAudio(base);
 			var backgroundSoundBuffer = null;
             
-            audio.loadSound("fitc.mp3", function(buffer) {
-                backgroundSoundBuffer = buffer;
-            });
             new ccDebuger(base);
             
             var nameController = new nameController(base);
@@ -90,9 +87,14 @@ content="▲ FITC WebU 2017 ▲" />
             
             base.loadingManager.onProgress = function (  url, itemsLoaded, itemsTotal ) {
                 if (itemsLoaded == 3) {
-                    base.textTools.loadTextMeshes(strings, () => {
-                       nameController.loadLetters();
-                       showIntro(); 
+                    
+                    audio.loadSound("sound/fitc.wav", function(buffer) {
+                        backgroundSoundBuffer = buffer;
+                        base.textTools.loadTextMeshes(strings, () => {
+                            nameController.loadLetters();
+                            showIntro();
+                            audio.play(backgroundSoundBuffer, true);                  
+                        });
                     });
                 }
 			};
@@ -104,10 +106,9 @@ content="▲ FITC WebU 2017 ▲" />
                 scheduler.reset();
                 scheduler.started = true;
                 scheduleBeats();
-                
+
                 base.blur.ApplyFirstLut(1.0);
                 
-                //audio.play(backgroundSoundBuffer, true);                    
             }
             
             function showIntro() {
