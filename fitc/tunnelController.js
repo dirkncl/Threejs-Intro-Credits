@@ -21,7 +21,6 @@ tunnelController.prototype.init = function(){
 
 tunnelController.prototype.addToScene = function() {
     this.material.uniforms.intensity.value = 1.0;
-    //base.scene.add(this.mesh);
 }
 
 tunnelController.prototype.removeFromScene = function() {

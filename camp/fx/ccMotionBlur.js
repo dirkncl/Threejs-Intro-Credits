@@ -32,8 +32,9 @@ ccMotionBlur = function ( base, strength ) {
             "	float angleNoise = ((angle+3.14159)/6.28318)*cycles;\n"+
             "	float l = length(uv);\n"+
             "	l *= (.5 - noise(angleNoise*noiseFrequency + time, cycles)*noiseAmplitude);\n"+
-            "	uv = vec2(cos(angle)*l + 0.5, sin(angle)*l + 0.5);\n"+	        
-			"	gl_FragColor = texture2D(tex,local) + texture2D(blur,uv) * strength;\n"+	
+            "	uv = vec2(cos(angle)*l + 0.5, sin(angle)*l + 0.5);\n"+
+            "   vec4 col = texture2D(tex,local);\n"+
+			"	gl_FragColor = col + texture2D(blur,uv) * strength;\n"+
 			"}";
 	var defaultFrag = "varying vec2 local;\n"+
 			"uniform sampler2D tex;\n"+

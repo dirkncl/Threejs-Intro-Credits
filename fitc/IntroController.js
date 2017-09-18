@@ -33,8 +33,9 @@ IntroController.prototype.update = function() {
     introController.mesh.rotation.z = Math.cos(introController.time)*0.05;
     introController.mesh.rotation.y = Math.cos(introController.time*1.25)*0.05;
 
-    base.blur.pass.uniforms.strength.value = Math.lerp(0.5, 1.0, progress);
-    base.blur.pass.uniforms.noiseAmplitude.value = Math.lerp(0.0, 0.05, progress);
+    var p = Math.min(1.0, progress*1.5);
+    base.blur.pass.uniforms.strength.value = Math.lerp(0.5, 0.95, p);
+    base.blur.pass.uniforms.noiseAmplitude.value = Math.lerp(0.0, 0.05, p);
     
     introController.time += base.time.delta;
 }

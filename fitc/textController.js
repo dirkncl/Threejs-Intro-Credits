@@ -175,7 +175,7 @@ textController.prototype.registerAnimations = function() {
 	var delayPerLetter = base.scheduler.totalBeat/2;
 	var easeOutTime = 1;
 	var startEaseOut = base.scheduler.totalPhrase-easeOutTime;	
-   
+   self.base.blur.pass.uniforms.noiseAmplitude.value = 0.0;
     base.scheduler.callNextPhraseRange((progress)=>{
         for (var i = 0; i < self.currentDisplayedMeshes.length; i++)
         {
@@ -195,12 +195,13 @@ textController.prototype.registerAnimations = function() {
             this.uniforms.time.value = base.time.time;
         }
         
-        self.base.blur.pass.uniforms.noiseAmplitude.value = progress * 0.01;
+        self.base.blur.pass.uniforms.noiseAmplitude.value = Math.lerp(0.0, 0.025, progress);
         self.base.blur.pass.uniforms.strength.value = Math.lerp(0.7, 1.0, progress);
 
-    }, 0.7, 1.0);
+    }, 0.65, 1.0);
     
     base.scheduler.callNextPhraseRange((progress)=>{
+        self.base.blur.pass.uniforms.noiseAmplitude.value = Math.lerp(0.025, 0.0, progress);
         self.base.blur.pass.uniforms.strength.value = Math.lerp(1.0, 0.7,progress);
     }, 0.0, 0.3);
 }

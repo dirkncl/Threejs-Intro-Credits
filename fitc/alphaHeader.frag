@@ -17,7 +17,8 @@ float sdBox( vec2 p, vec2 b )
 }
 
 float boxes(vec2 uv, float size, float repetitions) {
-    uv = mod (uv*repetitions, 1.) - 0.5;
+    uv.y = mod (uv.y*repetitions, 1.) - 0.5;
+    uv.x = mod (uv.x*repetitions, 2.) - 1.;
 
     float dist = sdBox(uv, vec2(size));
     dist = opS(sdBox(uv, vec2(size*0.8)), dist);
@@ -41,7 +42,7 @@ void main(){
      c.a *= intensity;
      
      c.b = 0.0;
-     c.rg = pow(c.rg, vec2(3.666));
+     c.rg = pow(c.rg, vec2(3.0));
      
      gl_FragColor = c;
 }
