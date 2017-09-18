@@ -4,7 +4,7 @@ function ccScheduler(base){
 	this.frameCallbacks = [];
 	this.timeCallbacks = [];
 	this.sequenceCallbacks = [];
-	this.phraseRangeCallbacks = [];
+	this.barRangeCallbacks = [];
     
 	this.bpm = 120;
 	this.remainingTimeInBeat = 0;
@@ -61,19 +61,19 @@ ccScheduler.prototype.update = function(){
 		}
 	}
     
-    length = this.phraseRangeCallbacks.length;
-	var progress = 1.0 - ((this.remainingBeatsInPhrase-1) * this.totalBeat + this.remainingTimeInBeat) / this.totalPhrase;
+    length = this.barRangeCallbacks.length;
+	var progress = 1.0 - ((this.remainingBeatsInBar-1) * this.totalBeat + this.remainingTimeInBeat) / this.totalBar;
     for (var i = 0; i < length; i++) {
-        var phraseRangeCallback = this.phraseRangeCallbacks[i];
+        var barRangeCallback = this.barRangeCallbacks[i];
 		
-        if (progress >= phraseRangeCallback.startPhrase && progress <= phraseRangeCallback.endPhrase) {
-            var rangeLength = phraseRangeCallback.endPhrase - phraseRangeCallback.startPhrase;
-            var normalizedRelativeProgress = (phraseRangeCallback.startPhrase - progress) / rangeLength;
-            phraseRangeCallback.func(normalizedRelativeProgress * -1);
+        if (progress >= barRangeCallback.startBar && progress <= barRangeCallback.endBar) {
+            var rangeLength = barRangeCallback.endBar - barRangeCallback.startBar;
+            var normalizedRelativeProgress = (barRangeCallback.startBar - progress) / rangeLength;
+            barRangeCallback.func(normalizedRelativeProgress * -1);
         }
-        else if (progress > phraseRangeCallback) {
-            phraseRangeCallback.func(1.0);
-            this.phraseRangeCallbacks.splice(i, 1);
+        else if (progress > barRangeCallback) {
+            barRangeCallback.func(1.0);
+            this.barRangeCallbacks.splice(i, 1);
 			i--;
 			length--;
         }
@@ -85,13 +85,14 @@ ccScheduler.prototype.update = function(){
 		this.remainingTimeInBeat+=this.totalBeat;
 		
 		this.remainingBeatsInBar--;
-		if(this.remainingBeatsInBar==0)
+		if(this.remainingBeatsInBar==0) {
+            this.barRangeCallbacks = [];
 			this.remainingBeatsInBar = 4;
+        }
 		
 		this.remainingBeatsInPhrase--;
 		if(this.remainingBeatsInPhrase==0){
 			this.remainingBeatsInPhrase = 16;
-			this.phraseRangeCallbacks = [];
 		}
 		
 		length = this.sequenceCallbacks.length;
@@ -132,11 +133,11 @@ ccScheduler.prototype.callNextPhrase = function(func){
 	});
 }
 
-ccScheduler.prototype.callNextPhraseRange = function(func, start, end){
-    this.phraseRangeCallbacks.push({
+ccScheduler.prototype.callNextBarRange = function(func, start, end){
+    this.barRangeCallbacks.push({
 		func: func,
-        startPhrase: start,
-        endPhrase: end
+        startBar: start,
+        endBar: end
 	});
 }
 

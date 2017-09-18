@@ -112,7 +112,7 @@ ccMotionBlur = function ( base, strength ) {
 ccMotionBlur.prototype.ApplyFirstLut = function(duration) {
     var self = this;
     this.lutPass.uniforms.lut1.value = this.luts[this.lutIndex];
-    this.base.scheduler.callNextPhraseRange((progress)=>{   
+    this.base.scheduler.callNextBarRange((progress)=>{   
         this.lutPass.uniforms.strength.value = progress;
     }, 0.0, 0.25);
 }
@@ -125,7 +125,7 @@ ccMotionBlur.prototype.NextLut = function(duration) {
     {
         this.lutPass.uniforms.lut2.value = this.luts[this.lutIndex];
 
-        this.base.scheduler.callNextPhraseRange((progress)=>{   
+        this.base.scheduler.callNextBarRange((progress)=>{   
             this.lutPass.uniforms.lutVal.value = progress;    
         }, 0.0, 0.5);
     }
@@ -133,14 +133,14 @@ ccMotionBlur.prototype.NextLut = function(duration) {
     {
         this.lutPass.uniforms.lut1.value = this.luts[this.lutIndex];
 
-        this.base.scheduler.callNextPhraseRange((progress)=>{   
+        this.base.scheduler.callNextBarRange((progress)=>{   
             this.lutPass.uniforms.lutVal.value = 1.0-progress;    
         }, 0.0, 0.5);    
     }
 }
 
 ccMotionBlur.prototype.ClearLut = function() {
-    this.base.scheduler.callNextPhraseRange((progress)=>{   
+    this.base.scheduler.callNextBarRange((progress)=>{   
         this.lutPass.uniforms.strength.value = 1.0-progress;
     }, 0.0, 0.25);
 }

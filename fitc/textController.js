@@ -174,9 +174,9 @@ textController.prototype.registerAnimations = function() {
     var self = this;
 	var delayPerLetter = base.scheduler.totalBeat/2;
 	var easeOutTime = 1;
-	var startEaseOut = base.scheduler.totalPhrase-easeOutTime;	
+	var startEaseOut = base.scheduler.totalBar-easeOutTime;	
    self.base.blur.pass.uniforms.noiseAmplitude.value = 0.0;
-    base.scheduler.callNextPhraseRange((progress)=>{
+    base.scheduler.callNextBarRange((progress)=>{
         for (var i = 0; i < self.currentDisplayedMeshes.length; i++)
         {
 			var p = i*.7+base.time.time*3;
@@ -186,7 +186,7 @@ textController.prototype.registerAnimations = function() {
         }
     }, 0.0, 1.0);
            
-    base.scheduler.callNextPhraseRange((progress)=>{
+    base.scheduler.callNextBarRange((progress)=>{
         for (var i = 0; i < self.currentDisplayedMeshes.length; i++)
         {
 			var p = i*.7+base.time.time*3;
@@ -200,7 +200,7 @@ textController.prototype.registerAnimations = function() {
 
     }, 0.65, 1.0);
     
-    base.scheduler.callNextPhraseRange((progress)=>{
+    base.scheduler.callNextBarRange((progress)=>{
         self.base.blur.pass.uniforms.noiseAmplitude.value = Math.lerp(0.025, 0.0, progress);
         self.base.blur.pass.uniforms.strength.value = Math.lerp(1.0, 0.7,progress);
     }, 0.0, 0.3);

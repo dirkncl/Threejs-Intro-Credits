@@ -46,7 +46,7 @@ OutroController.prototype.show = function(duration, onComplete) {
     this.base.blur.pass.uniforms.noiseAmplitude.value = 0.01;
     this.base.camera.position.z = 0.0;
     
-    this.base.scheduler.callNextPhraseRange((progress)=>{
+    this.base.scheduler.callNextBarRange((progress)=>{
         self.base.blur.pass.uniforms.strength.value = Math.lerp(1.0, 0.5,progress);
     
     }, 0.0, 0.5);

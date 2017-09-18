@@ -54,13 +54,13 @@ content="▲ FITC WebU 2017 ▲" />
 			var base = new ccBase();
 			new ccThreeBase(base);
 			var scheduler = new ccScheduler(base);
-            scheduler.setBPM(500);
+            scheduler.setBPM(120);
 			base.shaderGen = new shaderGenAlpha(base);
 			new ccMath();
 			var audio = new ccAudio(base);
 			var backgroundSoundBuffer = null;
             
-            audio.loadSound("sound/background.wav", function(buffer) {
+            audio.loadSound("fitc.mp3", function(buffer) {
                 backgroundSoundBuffer = buffer;
             });
             new ccDebuger(base);
@@ -123,7 +123,7 @@ content="▲ FITC WebU 2017 ▲" />
             function scheduleBeats() {
                 if (nameController.showNextName()) 
                 {
-                    scheduler.callNextPhrase(scheduleBeats);        
+                    scheduler.callNextBar(scheduleBeats);        
                 }
                 else 
                 {

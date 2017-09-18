@@ -73,9 +73,9 @@ tunnelController.prototype.AddText = function(text) {
     base.scene.add(this.textParent);
     var self = this;
     
-    base.scheduler.callNextPhraseRange((progress)=>{        
+    base.scheduler.callNextBarRange((progress)=>{        
         this.obj.rotateOnAxis(axis, -1.05 * base.time.delta);
-        this.textParent.rotateOnAxis(axis, -1.45 * base.time.delta * (Math.max(0.05, 1.0-progress*1.45)));       
+        this.textParent.rotateOnAxis(axis, -1.35 * base.time.delta * (Math.max(0.05, 1.0-progress*1.45)));       
     }, 0.0, 1.0);
 }
 
