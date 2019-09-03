@@ -198,7 +198,7 @@ ccBase.prototype.load = function(url, callback){
 	request.open("GET", url);
 	request.onreadystatechange = ()=>{
 		if (request.readyState == 4){
-			if(request.status == 200)
+			if(request.status == 200 || request.status == 0)
 				callback(request.responseText);
 			else
 				console.log(request.statusText);

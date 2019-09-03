@@ -65,12 +65,20 @@ nameController.prototype.showNextName = function() {
 }
 
 nameController.prototype.parseNames = function(data) {
+    function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a; 
+    }
     
     nameArray = data.split('\n');
     for (var i = 0; i < nameArray.length; i++) {
         var name = new FitcName(this.base,nameArray[i], i);
         this.names.push(name);
     }
+    this.names = shuffle(this.names)
 }
 
 nameController.prototype.loadLetters = function() {

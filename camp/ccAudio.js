@@ -25,7 +25,7 @@ ccAudio = function(base){
 		req.open("GET",url,true);
 		req.responseType = 'arraybuffer';
 		req.onload = function(){
-			self.context.decodeAudioData(req.response,callback);
+        self.context.decodeAudioData(req.response,callback);
 		}
 		req.send();
 	}
