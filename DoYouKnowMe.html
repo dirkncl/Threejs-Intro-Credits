@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>▲ FITC Intro ▲</title>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<script src = "camp/ccBase.js"></script>	
+		<script src = "camp/ccThreeBase.js"></script>	
+		<script src = "camp/ccScheduler.js"></script>	
+		<script src = "camp/ccDebuger.js"></script>	
+		<script src = "camp/ccGifSaver.js"></script>	
+		<script src = "camp/ccRenderShader.js"></script>
+		<script src = "camp/ccAudio.js"></script>	
+    <script src = "camp/ccILoveYou.js"></script>
+		<script src = "camp/ccMesh.js"></script>
+		<script src = "camp/ccMath.js"></script>
+    <script src = "camp/fx/ccMotionBlur.js"></script>	
+    <script src = "camp/ccTextTools.js"></script>	
+
+    <script src="js/three.min.js"></script>
+		<script src="js/libs/stats.min.js"></script>
+	  <script src="js/TweenMax.min.js"></script>
+    <script src="js/utils/GeometryUtils.js"></script>	
+		<script src="js/shaders/CopyShader.js"></script>
+		<script src="js/postprocessing/EffectComposer.js"></script>
+		<script src="js/postprocessing/ShaderPass.js"></script>
+		<script src="js/postprocessing/RenderPass.js"></script>
+		<script src="js/postprocessing/MaskPass.js"></script>
+		<script src="js/postprocessing/SavePass.js"></script>
+		<script src="js/postprocessing/TexturePass.js"></script>
+
+		<script src = "fitc/FitcName.js"></script>
+    <script src = "fitc/tunnelController.js"></script>
+    <script src = "fitc/IntroController.js"></script>
+    <script src = "fitc/OutroController.js"></script>
+    <script src = "fitc/textController.js"></script>
+		<script src = "fitc/nameController.js"></script>
+		<script src = "fitc/voxGenerator.js"></script>
+		<script src = "fitc/shaderGenAlpha.js"></script>
+    <span id='reload' style="position:fixed;top:10px;right:10px;z-index:10;color:red;background-color:white;cursor:pointer" onmousedown='reload()'>Reload</span>
+		<script>
+      AudioCollection = [
+        'sound/Jay Ungar - Ashokan Farewell (1983) (Benjamin Robert Tubb).mid',
+        'sound/Freddy Fender - Wasted days and wasted nights.mid',
+        'sound/Rosy and Andres - Heartbreaking Dreams (1977).mp3',
+        'sound/Emmylou Harris - Sweet Dreams (Don Carroll).mid',
+        'sound/Freddy Fender - Baby heaven sent me You (Chuck Duklis).mid',
+        'sound/Franky S - Lelaki dan rembulan.mp3',
+        'sound/Boney M - El Lute.mid',
+        'sound/Freddy Fender - Before the next tear drop falls.mid',
+        'sound/Vengaboys - Sha La La La La.mid',
+        'sound/Faded Love (Don Carroll).mid',
+        'sound/De Four Tak Sonja 1970.mp3',
+        'sound/Freddy Fender - Secret love.mid',
+        'sound/Freddy Fender - Vaya con dios.mid'
+      ];
+      
+      var fileAudio = AudioCollection[Math.floor(Math.random() * AudioCollection.length-1)];
+      var urlAudio;
+      if(fileAudio.split('/').pop().split('.').pop()==='mid'){
+        IllustionOfMilkyWay(fileAudio, function(data){
+          urlAudio = URL.createObjectURL(fromNowIWillGoFuture(data).toBlob());
+        })
+      }
+      else{
+        urlAudio = fileAudio;
+      }
+
+      
+			var base = new ccBase();
+			new ccThreeBase(base);
+			var scheduler = new ccScheduler(base); scheduler.setBPM(120);
+			base.shaderGen = new shaderGenAlpha(base);
+			new ccMath();
+			var audio = new ccAudio(base);
+      
+			var backgroundSoundBuffer = null;
+            
+            new ccDebuger(base);
+            
+            var nameController = new nameController(base);
+            var introController = new IntroController(base);
+            var outroController = null;
+            var strings = [
+                {
+                    key:"intro",
+                    string:"FITC presents"
+                },
+                { 
+                    key:"outroTitle",
+                    string:"Web Unleashed 2017"
+                },
+                { 
+                    key:"click",
+                    string:"Click to Replay"
+                }
+            ];
+            
+            base.textTools = new ccTextTools(base);
+		
+            scheduler.init();
+            nameController.loadNames(base.loadingManager);
+            
+            function Play(Buff){
+              audio.context.resume();
+              audio.play(Buff, true);
+            
+            }
+            base.loadingManager.onProgress = function go(  url, itemsLoaded, itemsTotal ) {
+                if (itemsLoaded == 3) {
+                    audio.loadSound(urlAudio, function(buffer) {
+                        backgroundSoundBuffer = buffer;
+                        base.textTools.loadTextMeshes(strings, () => {
+                            nameController.loadLetters();
+                            showIntro();
+                            return Play(backgroundSoundBuffer)
+                        });
+
+                      
+                    });
+                }
+			};
+            
+            function warmup() {
+                
+                nameController.reset();
+                
+                scheduler.reset();
+                scheduler.started = true;
+                scheduleBeats();
+
+                base.blur.ApplyFirstLut(1.0);
+                
+            }
+            
+            function showIntro() {
+                if (outroController == null) 
+                {
+                    outroController = new OutroController(base);
+                }
+                audio.stopAll();    
+
+                introController.show(8.0, () => { warmup(); });
+            }
+            
+            function scheduleBeats() {
+                if (nameController.showNextName()) 
+                {
+                    scheduler.callNextBar(scheduleBeats);        
+                }
+                else 
+                {
+                    showFinish();
+                }
+            }
+            
+            function showFinish() {
+                outroController.show(5.0, showIntro);
+            }
+         function reload(){
+           var meta=document.createElement("meta");
+           meta.setAttribute("http-equiv","refresh");
+           meta.setAttribute("content","0;URL="+document.URL+"");
+           document.head.appendChild(meta)
+         }
+		</script>			
+	</body>
+</html>
